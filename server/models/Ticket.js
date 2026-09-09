@@ -12,7 +12,7 @@ export const getNextTicketId = async () => {
   const counter = await Counter.findByIdAndUpdate(
     { _id: 'ticket_id' },
     { $inc: { seq: 1 } },
-    { new: true, upsert: true }
+    { returnDocument: 'after', upsert: true }
   );
   return `TKT-${String(counter.seq).padStart(3, '0')}`;
 };
