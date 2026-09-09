@@ -20,6 +20,7 @@ import Button from '../components/common/Button';
 import ErrorState from '../components/common/ErrorState';
 import AiTicketSummarizer from '../components/tickets/AiTicketSummarizer';
 import AiReplyAssistant from '../components/tickets/AiReplyAssistant';
+import CustomerHistoryCard from '../components/tickets/CustomerHistoryCard';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -327,6 +328,12 @@ const TicketDetails = () => {
               )}
             </div>
           </section>
+
+          {/* Customer History Card */}
+          <CustomerHistoryCard
+            customerEmail={customerEmail}
+            currentTicketId={currentTicketId}
+          />
 
           {/* Status & Update Controls with AI Reply Assistant */}
           <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
