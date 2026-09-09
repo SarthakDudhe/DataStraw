@@ -3,14 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Mail, 
-  Calendar, 
   Clock, 
   MessageSquare, 
   Save, 
   Loader2, 
-  User, 
-  Hash,
-  AlertCircle
+  Send
 } from 'lucide-react';
 import { getTicket, updateTicket } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
@@ -21,6 +18,8 @@ import Select from '../components/common/Select';
 import Textarea from '../components/common/Textarea';
 import Button from '../components/common/Button';
 import ErrorState from '../components/common/ErrorState';
+import AiTicketSummarizer from '../components/tickets/AiTicketSummarizer';
+import AiReplyAssistant from '../components/tickets/AiReplyAssistant';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -95,6 +94,11 @@ const TicketDetails = () => {
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const handleInsertAiReply = (draftText) => {
+    setNote(draftText);
+    showToast('AI draft inserted into note field.', 'info');
   };
 
   // 1. Loading Skeleton State
@@ -205,8 +209,11 @@ const TicketDetails = () => {
 
       {/* Two-Column Workspace Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 spans): Description & Notes Activity */}
+        {/* Left Column (2 spans): AI Diagnosis, Description & Notes */}
         <div className="lg:col-span-2 space-y-6">
+          {/* AI Intelligence Card */}
+          <AiTicketSummarizer ticket={ticket} />
+
           {/* Issue Description */}
           <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle">
             <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
@@ -235,7 +242,7 @@ const TicketDetails = () => {
               <div className="text-center py-8 px-4 border border-dashed border-zinc-800 rounded-lg bg-zinc-950/20">
                 <p className="text-xs text-zinc-400">No notes yet.</p>
                 <p className="text-[11px] text-zinc-500 mt-0.5">
-                  Add an internal note or status update in the control panel.
+                  Use the control panel on the right to add an internal note or status update.
                 </p>
               </div>
             ) : (
@@ -321,9 +328,9 @@ const TicketDetails = () => {
             </div>
           </section>
 
-          {/* Status & Update Controls */}
-          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-800/80 pb-2.5">
+          {/* Status & Update Controls with AI Reply Assistant */}
+          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
+            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800/80 pb-2.5">
               Update Ticket
             </h2>
 
@@ -337,13 +344,21 @@ const TicketDetails = () => {
                 disabled={isUpdating}
               />
 
+              {/* AI Smart Reply Assistant integrated directly */}
+              <div className="pt-1">
+                <AiReplyAssistant
+                  ticket={ticket}
+                  onInsertReply={handleInsertAiReply}
+                />
+              </div>
+
               <Textarea
-                label="Add a note"
+                label="Add a note or response"
                 name="note"
-                rows={3}
+                rows={4}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Type internal note or update comment..."
+                placeholder="Type internal note, resolution steps, or customer reply..."
                 disabled={isUpdating}
               />
 
