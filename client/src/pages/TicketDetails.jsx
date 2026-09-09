@@ -7,7 +7,10 @@ import {
   MessageSquare, 
   Save, 
   Loader2, 
-  Send
+  Send,
+  CheckCircle2,
+  PlayCircle,
+  RotateCcw
 } from 'lucide-react';
 import { getTicket, updateTicket } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
@@ -102,6 +105,21 @@ const TicketDetails = () => {
   const handleInsertAiReply = (draftText) => {
     setNote(draftText);
     showToast('AI draft inserted into note field.', 'info');
+  };
+
+  const handleQuickStatusTransition = async (newStatus) => {
+    if (newStatus === ticket?.status || isUpdating) return;
+    setIsUpdating(true);
+    try {
+      await updateTicket(ticketId, { status: newStatus });
+      setStatus(newStatus);
+      showToast(`Status updated to "${newStatus}".`, 'success');
+      await loadTicket();
+    } catch (err) {
+      showToast(err.message || 'Failed to update ticket status', 'error');
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   // 1. Loading Skeleton State
@@ -344,7 +362,49 @@ const TicketDetails = () => {
               Update Ticket
             </h2>
 
-            <form onSubmit={handleSaveChanges} className="space-y-4">
+            {/* Quick 1-Click Status Transitions */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wide block">
+                Quick Actions
+              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                {ticket.status !== 'In Progress' && (
+                  <button
+                    type="button"
+                    disabled={isUpdating}
+                    onClick={() => handleQuickStatusTransition('In Progress')}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-colors disabled:opacity-50"
+                  >
+                    <PlayCircle className="w-3.5 h-3.5" />
+                    <span>In Progress</span>
+                  </button>
+                )}
+                {ticket.status !== 'Closed' && (
+                  <button
+                    type="button"
+                    disabled={isUpdating}
+                    onClick={() => handleQuickStatusTransition('Closed')}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-colors disabled:opacity-50"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Resolve & Close</span>
+                  </button>
+                )}
+                {ticket.status === 'Closed' && (
+                  <button
+                    type="button"
+                    disabled={isUpdating}
+                    onClick={() => handleQuickStatusTransition('Open')}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-colors disabled:opacity-50"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reopen Ticket</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <form onSubmit={handleSaveChanges} className="space-y-4 pt-1">
               <Select
                 label="Status"
                 name="status"

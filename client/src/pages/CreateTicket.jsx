@@ -8,6 +8,7 @@ import PageHeader from '../components/common/PageHeader';
 import Input from '../components/common/Input';
 import Textarea from '../components/common/Textarea';
 import Button from '../components/common/Button';
+import LiveTriageCard from '../components/tickets/LiveTriageCard';
 
 const CreateTicket = () => {
   const navigate = useNavigate();
@@ -153,6 +154,12 @@ const CreateTicket = () => {
             required
             error={errors.description}
             disabled={isSubmitting}
+          />
+
+          {/* Real-time Triage & SLA Prediction */}
+          <LiveTriageCard
+            subject={formData.subject}
+            description={formData.description}
           />
 
           <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-end gap-3">
