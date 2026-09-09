@@ -1,9 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Button from './Button';
 
 const EmptyState = ({
   title = 'No tickets found',
-  description = 'There are currently no tickets matching your criteria.',
-  action,
+  description = 'There are no support tickets matching your current criteria.',
+  isFiltered = false,
+  onClearFilters,
   className = '',
 }) => {
   return (
@@ -26,11 +29,22 @@ const EmptyState = ({
           />
         </svg>
       </div>
+
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
       {description && (
         <p className="mt-1 text-sm text-slate-500 max-w-sm">{description}</p>
       )}
-      {action && <div className="mt-4">{action}</div>}
+
+      <div className="mt-5 flex items-center gap-3">
+        {isFiltered && onClearFilters && (
+          <Button variant="secondary" onClick={onClearFilters}>
+            Clear Filters
+          </Button>
+        )}
+        <Link to="/tickets/new">
+          <Button variant="primary">Create Ticket</Button>
+        </Link>
+      </div>
     </div>
   );
 };
