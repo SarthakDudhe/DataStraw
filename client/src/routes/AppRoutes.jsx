@@ -9,6 +9,7 @@ import CreateTicket from '../pages/CreateTicket';
 import TicketDetails from '../pages/TicketDetails';
 import Analytics from '../pages/Analytics';
 import NotFound from '../pages/NotFound';
+import KeyboardShortcutsModal from '../components/common/KeyboardShortcutsModal';
 
 const AppLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,6 +37,7 @@ const AppLayout = () => {
           </PageContainer>
         </div>
       </div>
+      <KeyboardShortcutsModal />
     </div>
   );
 };

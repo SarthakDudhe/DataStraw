@@ -17,6 +17,7 @@ import TicketList from '../components/tickets/TicketList';
 import ErrorState from '../components/common/ErrorState';
 import { exportTicketsToCsv } from '../utils/exportCsv';
 import { useToast } from '../components/common/Toast';
+import { AVAILABLE_TAGS } from '../utils/tagUtils';
 
 const Home = () => {
   const {
@@ -28,6 +29,8 @@ const Home = () => {
     setSearchTerm,
     statusFilter,
     setStatusFilter,
+    tagFilter,
+    setTagFilter,
     sortBy,
     setSortBy,
     clearFilters,
@@ -36,7 +39,9 @@ const Home = () => {
   const { showToast } = useToast();
 
   const isFiltered = Boolean(
-    searchTerm.trim() || (statusFilter && statusFilter !== 'All Statuses' && statusFilter !== 'All')
+    searchTerm.trim() || 
+    (statusFilter && statusFilter !== 'All Statuses' && statusFilter !== 'All') ||
+    (tagFilter && tagFilter !== 'all')
   );
 
   const handleExportCsv = () => {
@@ -212,6 +217,30 @@ const Home = () => {
             </select>
           </div>
         </div>
+      </div>
+
+      {/* Category Tag Pills */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+        <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mr-1 shrink-0">
+          Category:
+        </span>
+        {AVAILABLE_TAGS.map((tag) => {
+          const isActive = tagFilter === tag.id;
+          return (
+            <button
+              key={tag.id}
+              type="button"
+              onClick={() => setTagFilter(tag.id)}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all shrink-0 border ${
+                isActive
+                  ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                  : 'bg-[#111113] hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border-zinc-800/80'
+              }`}
+            >
+              {tag.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Active filter count & reset */}

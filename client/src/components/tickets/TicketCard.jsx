@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import SlaBadge from './SlaBadge';
+import TagBadge from './TagBadge';
 import { formatDate } from '../../utils/formatDate';
+import { getTicketTags } from '../../utils/tagUtils';
 
 const TicketCard = ({ ticket }) => {
   const ticketId = ticket.ticket_id || ticket.id;
   const customerName = ticket.customer_name || ticket.customerName || '—';
   const customerEmail = ticket.customer_email || ticket.customerEmail || '';
   const createdAt = ticket.created_at || ticket.createdAt;
+  const tags = getTicketTags(ticket);
 
   return (
     <Link
@@ -39,6 +42,15 @@ const TicketCard = ({ ticket }) => {
           <span className="text-zinc-500 truncate">&bull; {customerEmail}</span>
         )}
       </div>
+
+      {/* Category Tags */}
+      {tags.length > 0 && (
+        <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
+          {tags.map((tag) => (
+            <TagBadge key={tag.id} tag={tag} />
+          ))}
+        </div>
+      )}
 
       <div className="mt-3 pt-3 border-t border-zinc-800/60 flex items-center justify-between text-xs text-zinc-500">
         <span className="flex items-center gap-1">

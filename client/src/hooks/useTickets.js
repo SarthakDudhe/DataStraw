@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getTickets } from '../services/ticketApi';
 import { calculateSlaStatus } from '../utils/slaUtils';
+import { getTicketTags } from '../utils/tagUtils';
 
 /**
  * Custom hook for managing ticket fetching, searching, status filtering, and sorting.
@@ -11,6 +12,7 @@ export const useTickets = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Statuses');
+  const [tagFilter, setTagFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'oldest' | 'recently_updated'
 
   // Fetch tickets from API
@@ -45,9 +47,17 @@ export const useTickets = () => {
     return () => clearTimeout(timer);
   }, [fetchTickets]);
 
-  // Client-side sorting for responsive UX bonus
+  // Client-side sorting & tag filtering for responsive UX bonus
   const tickets = useMemo(() => {
-    const list = [...rawTickets];
+    let list = [...rawTickets];
+
+    if (tagFilter && tagFilter !== 'all') {
+      list = list.filter((t) => {
+        const tags = getTicketTags(t);
+        return tags.some((tag) => tag.id === tagFilter);
+      });
+    }
+
     list.sort((a, b) => {
       const aCreated = new Date(a.created_at || a.createdAt || 0).getTime();
       const bCreated = new Date(b.created_at || b.createdAt || 0).getTime();
@@ -69,11 +79,12 @@ export const useTickets = () => {
       return bCreated - aCreated;
     });
     return list;
-  }, [rawTickets, sortBy]);
+  }, [rawTickets, tagFilter, sortBy]);
 
   const clearFilters = useCallback(() => {
     setSearchTerm('');
     setStatusFilter('All Statuses');
+    setTagFilter('all');
     setSortBy('newest');
   }, []);
 
@@ -86,6 +97,8 @@ export const useTickets = () => {
     setSearchTerm,
     statusFilter,
     setStatusFilter,
+    tagFilter,
+    setTagFilter,
     sortBy,
     setSortBy,
     clearFilters,

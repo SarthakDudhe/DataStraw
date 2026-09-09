@@ -5,7 +5,7 @@ import {
   Plus, 
   Bell, 
   Search, 
-  Command,
+  HelpCircle,
   Layers
 } from 'lucide-react';
 
@@ -33,17 +33,37 @@ const Navbar = ({ onToggleMobile }) => {
         </div>
 
         {/* Desktop Quick Search Trigger Bar */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-zinc-400 text-xs w-64 md:w-80 cursor-default">
+        <div 
+          onClick={() => {
+            const el = document.getElementById('search-input') || document.querySelector('input[type="text"]');
+            if (el) {
+              el.focus();
+              el.select?.();
+            }
+          }}
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-900/80 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-400 text-xs w-64 md:w-80 cursor-pointer transition-colors"
+          title="Press / to search"
+        >
           <Search className="w-3.5 h-3.5 text-zinc-500" />
-          <span className="text-zinc-500 flex-1">Search tickets, customer, ID...</span>
-          <kbd className="hidden lg:inline-flex items-center gap-0.5 text-[10px] font-mono text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700/60">
-            <Command className="w-2.5 h-2.5" /> K
+          <span className="text-zinc-500 flex-1">Quick search...</span>
+          <kbd className="inline-flex items-center gap-0.5 text-[10px] font-mono text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700/60">
+            /
           </kbd>
         </div>
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
+        {/* Keyboard Shortcuts Trigger */}
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: '?' }))}
+          className="p-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors focus:outline-none"
+          title="Keyboard Shortcuts (?)"
+        >
+          <HelpCircle className="w-4 h-4" />
+        </button>
+
         {/* Subtle notifications bell */}
         <button
           type="button"
