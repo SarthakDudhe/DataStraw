@@ -6,7 +6,8 @@ import {
   Clock, 
   CheckCircle2, 
   CircleDot,
-  RotateCcw
+  RotateCcw,
+  Download
 } from 'lucide-react';
 import { useTickets } from '../hooks/useTickets';
 import PageHeader from '../components/common/PageHeader';
@@ -14,6 +15,8 @@ import SearchBar from '../components/search/SearchBar';
 import StatusFilter from '../components/search/StatusFilter';
 import TicketList from '../components/tickets/TicketList';
 import ErrorState from '../components/common/ErrorState';
+import { exportTicketsToCsv } from '../utils/exportCsv';
+import { useToast } from '../components/common/Toast';
 
 const Home = () => {
   const {
@@ -30,10 +33,20 @@ const Home = () => {
     clearFilters,
     refetch,
   } = useTickets();
+  const { showToast } = useToast();
 
   const isFiltered = Boolean(
     searchTerm.trim() || (statusFilter && statusFilter !== 'All Statuses' && statusFilter !== 'All')
   );
+
+  const handleExportCsv = () => {
+    if (tickets.length === 0) {
+      showToast('No tickets to export', 'info');
+      return;
+    }
+    exportTicketsToCsv(tickets, `support_tickets_${new Date().toISOString().slice(0, 10)}.csv`);
+    showToast('Filtered tickets exported to CSV', 'success');
+  };
 
   // Calculate real metrics from the fetched tickets
   const stats = useMemo(() => {
@@ -57,13 +70,26 @@ const Home = () => {
   }, [tickets, totalCount]);
 
   const newTicketAction = (
-    <Link
-      to="/tickets/new"
-      className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 rounded-lg shadow-sm border border-blue-500/30 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-    >
-      <Plus className="w-4 h-4" />
-      <span>Create Ticket</span>
-    </Link>
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={handleExportCsv}
+        disabled={loading || tickets.length === 0}
+        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-zinc-300 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg shadow-sm transition-colors disabled:opacity-50"
+        title="Download CSV of current tickets"
+      >
+        <Download className="w-4 h-4 text-zinc-400" />
+        <span className="hidden sm:inline">Export CSV</span>
+      </button>
+
+      <Link
+        to="/tickets/new"
+        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 rounded-lg shadow-sm border border-blue-500/30 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+      >
+        <Plus className="w-4 h-4" />
+        <span>Create Ticket</span>
+      </Link>
+    </div>
   );
 
   return (

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   Inbox, 
   PlusCircle, 
+  BarChart3,
   Layers,
   Sparkles,
   LifeBuoy
@@ -59,6 +60,14 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
             >
               <PlusCircle className="w-4 h-4 text-zinc-400" />
               <span>New Ticket</span>
+            </NavLink>
+            <NavLink
+              to="/analytics"
+              onClick={onCloseMobile}
+              className={navItemClass}
+            >
+              <BarChart3 className="w-4 h-4 text-zinc-400" />
+              <span>Analytics & SLA</span>
             </NavLink>
           </nav>
         </div>

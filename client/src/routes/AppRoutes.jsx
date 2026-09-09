@@ -7,6 +7,7 @@ import PageContainer from '../components/layout/PageContainer';
 import Home from '../pages/Home';
 import CreateTicket from '../pages/CreateTicket';
 import TicketDetails from '../pages/TicketDetails';
+import Analytics from '../pages/Analytics';
 import NotFound from '../pages/NotFound';
 
 const AppLayout = () => {
@@ -29,6 +30,7 @@ const AppLayout = () => {
               <Route path="/" element={<Home />} />
               <Route path="/tickets/new" element={<CreateTicket />} />
               <Route path="/tickets/:ticketId" element={<TicketDetails />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </PageContainer>
