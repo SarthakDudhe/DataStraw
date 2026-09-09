@@ -21,6 +21,8 @@ import ErrorState from '../components/common/ErrorState';
 import AiTicketSummarizer from '../components/tickets/AiTicketSummarizer';
 import AiReplyAssistant from '../components/tickets/AiReplyAssistant';
 import CustomerHistoryCard from '../components/tickets/CustomerHistoryCard';
+import SlaBadge from '../components/tickets/SlaBadge';
+import QuickMacros from '../components/tickets/QuickMacros';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -196,6 +198,7 @@ const TicketDetails = () => {
               #{currentTicketId}
             </span>
             <StatusBadge status={ticket.status} />
+            <SlaBadge createdAt={createdAt} status={ticket.status} />
           </div>
           <div className="flex items-center gap-2 text-xs text-zinc-500">
             <Clock className="w-3.5 h-3.5 text-zinc-500" />
@@ -359,8 +362,16 @@ const TicketDetails = () => {
                 />
               </div>
 
+              <QuickMacros
+                ticket={ticket}
+                onApplyMacro={(macroText) => {
+                  setNote((prev) => (prev.trim() ? `${prev}\n\n${macroText}` : macroText));
+                  showToast('Quick macro inserted into response field.', 'info');
+                }}
+                disabled={isUpdating}
+              />
+
               <Textarea
-                label="Add a note or response"
                 name="note"
                 rows={4}
                 value={note}

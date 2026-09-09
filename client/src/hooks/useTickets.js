@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getTickets } from '../services/ticketApi';
+import { calculateSlaStatus } from '../utils/slaUtils';
 
 /**
  * Custom hook for managing ticket fetching, searching, status filtering, and sorting.
@@ -53,6 +54,11 @@ export const useTickets = () => {
       const aUpdated = new Date(a.updated_at || a.updatedAt || aCreated).getTime();
       const bUpdated = new Date(b.updated_at || b.updatedAt || bCreated).getTime();
 
+      if (sortBy === 'urgent_sla') {
+        const slaA = calculateSlaStatus(a.created_at || a.createdAt, a.status).urgencyScore;
+        const slaB = calculateSlaStatus(b.created_at || b.createdAt, b.status).urgencyScore;
+        return slaB - slaA;
+      }
       if (sortBy === 'oldest') {
         return aCreated - bCreated;
       }

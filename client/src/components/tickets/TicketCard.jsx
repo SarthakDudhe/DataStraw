@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
 import StatusBadge from './StatusBadge';
+import SlaBadge from './SlaBadge';
 import { formatDate } from '../../utils/formatDate';
 
 const TicketCard = ({ ticket }) => {
@@ -16,9 +17,12 @@ const TicketCard = ({ ticket }) => {
       className="block bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle hover:border-zinc-700 hover:bg-zinc-900/40 transition-all group"
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="font-mono text-xs font-semibold text-zinc-400 group-hover:text-blue-400">
-          #{ticketId}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs font-semibold text-zinc-400 group-hover:text-blue-400">
+            #{ticketId}
+          </span>
+          <SlaBadge createdAt={createdAt} status={ticket.status} compact />
+        </div>
         <StatusBadge status={ticket.status} />
       </div>
 

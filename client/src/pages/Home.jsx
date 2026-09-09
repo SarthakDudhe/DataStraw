@@ -180,6 +180,7 @@ const Home = () => {
               className="appearance-none px-3 py-2 pr-7 bg-zinc-950/80 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs sm:text-sm text-zinc-300 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-colors shadow-subtle cursor-pointer"
             >
               <option value="newest" className="bg-[#111113] text-zinc-100">Sort: Newest</option>
+              <option value="urgent_sla" className="bg-[#111113] text-amber-400 font-medium">Sort: Most Urgent SLA ⚡</option>
               <option value="oldest" className="bg-[#111113] text-zinc-100">Sort: Oldest</option>
               <option value="recently_updated" className="bg-[#111113] text-zinc-100">Sort: Recently Updated</option>
             </select>
