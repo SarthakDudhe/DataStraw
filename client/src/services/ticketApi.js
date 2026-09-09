@@ -68,15 +68,7 @@ function saveLocalTickets(tickets) {
 }
 
 /**
- * Ticket API Client
- * 
- * Endpoints:
- * - GET    /api/tickets              -> getTickets({ search, status })
- * - GET    /api/tickets/:ticket_id   -> getTicket(ticketId)
- * - POST   /api/tickets              -> createTicket({ customer_name, customer_email, subject, description })
- * - PUT    /api/tickets/:ticket_id   -> updateTicket(ticketId, { status, notes })
- * 
- * Provides automatic fallback to sample data when backend routes are not yet mounted.
+ * Ticket & AI API Client
  */
 export const ticketApi = {
   /**
@@ -138,14 +130,10 @@ export const ticketApi = {
       if (response.ok) {
         return await response.json();
       }
-      if (response.status === 404 && API_BASE_URL) {
-        // If real backend explicitly returned 404, check local fallback
-      }
     } catch {
       // Backend not yet reachable
     }
 
-    // Fallback lookup
     const list = getLocalTickets();
     const found = list.find(
       (t) => (t.ticket_id || t.id || '').toString() === ticketId.toString()
@@ -185,7 +173,6 @@ export const ticketApi = {
       // Backend not yet reachable
     }
 
-    // Fallback local creation
     const list = getLocalTickets();
     const newIdNum = list.length + 1;
     const newTicketId = `TKT-${String(newIdNum).padStart(3, '0')}`;
@@ -223,7 +210,6 @@ export const ticketApi = {
       // Backend not yet reachable
     }
 
-    // Fallback local update
     const list = getLocalTickets();
     const index = list.findIndex(
       (t) => (t.ticket_id || t.id || '').toString() === ticketId.toString()
@@ -256,6 +242,49 @@ export const ticketApi = {
 
     return updated;
   },
+
+  /**
+   * Gemini AI: Summarize ticket via backend endpoint
+   */
+  async aiSummarizeTicket(payload) {
+    const url = `${API_BASE_URL}/api/ai/summarize`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to generate AI summary (${response.status})`);
+    }
+
+    return await response.json();
+  },
+
+  /**
+   * Gemini AI: Generate smart reply draft via backend endpoint
+   */
+  async aiGenerateReply(payload) {
+    const url = `${API_BASE_URL}/api/ai/reply`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to generate AI reply (${response.status})`);
+    }
+
+    return await response.json();
+  },
 };
 
-export const { getTickets, getTicket, createTicket, updateTicket } = ticketApi;
+export const { 
+  getTickets, 
+  getTicket, 
+  createTicket, 
+  updateTicket, 
+  aiSummarizeTicket, 
+  aiGenerateReply 
+} = ticketApi;
