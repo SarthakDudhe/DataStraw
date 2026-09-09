@@ -1,0 +1,11 @@
+export const TICKET_STATUS = {
+  OPEN: 'Open',
+  IN_PROGRESS: 'In Progress',
+  CLOSED: 'Closed',
+};
+
+export const TICKET_STATUS_LIST = [
+  TICKET_STATUS.OPEN,
+  TICKET_STATUS.IN_PROGRESS,
+  TICKET_STATUS.CLOSED,
+];
