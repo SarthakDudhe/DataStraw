@@ -2,20 +2,32 @@ import React from 'react';
 import { TICKET_STATUS } from '../../utils/constants';
 
 const statusStyles = {
-  [TICKET_STATUS.OPEN]: 'bg-blue-50 text-blue-700 border-blue-200',
-  [TICKET_STATUS.IN_PROGRESS]: 'bg-amber-50 text-amber-700 border-amber-200',
-  [TICKET_STATUS.CLOSED]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  [TICKET_STATUS.OPEN]: {
+    container: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    dot: 'bg-blue-400',
+  },
+  [TICKET_STATUS.IN_PROGRESS]: {
+    container: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    dot: 'bg-amber-400',
+  },
+  [TICKET_STATUS.CLOSED]: {
+    container: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    dot: 'bg-emerald-400',
+  },
 };
 
 const StatusBadge = ({ status, className = '' }) => {
-  const currentStyle = statusStyles[status] || 'bg-slate-100 text-slate-700 border-slate-200';
+  const current = statusStyles[status] || {
+    container: 'bg-zinc-800/60 text-zinc-400 border-zinc-700/40',
+    dot: 'bg-zinc-500',
+  };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${currentStyle} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border tracking-wide select-none ${current.container} ${className}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-75"></span>
-      {status || 'Unknown'}
+      <span className={`w-1.5 h-1.5 rounded-full ${current.dot}`}></span>
+      <span>{status || 'Unknown'}</span>
     </span>
   );
 };

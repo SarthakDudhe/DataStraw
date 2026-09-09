@@ -1,10 +1,10 @@
 import React from 'react';
 
 const variantClasses = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm',
-  secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus:ring-blue-500 shadow-sm',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
-  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-400',
+  primary: 'bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white shadow-sm border border-blue-500/30 focus:ring-blue-500/40',
+  secondary: 'bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-800 text-zinc-200 border border-zinc-700/60 focus:ring-zinc-600/40',
+  danger: 'bg-red-600/90 hover:bg-red-500 text-white border border-red-500/30 focus:ring-red-500/40',
+  ghost: 'bg-transparent text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60 focus:ring-zinc-700',
 };
 
 const Button = ({
@@ -17,7 +17,7 @@ const Button = ({
   ...props
 }) => {
   const baseClasses =
-    'inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    'inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-[#09090B] disabled:opacity-50 disabled:cursor-not-allowed select-none';
   const selectedVariant = variantClasses[variant] || variantClasses.primary;
 
   return (

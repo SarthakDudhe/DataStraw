@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Send, AlertCircle, Loader2 } from 'lucide-react';
 import { createTicket } from '../services/ticketApi';
 import { validateTicketForm } from '../utils/validation';
 import { useToast } from '../components/common/Toast';
@@ -27,7 +28,6 @@ const CreateTicket = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error for field as user types
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -40,18 +40,15 @@ const CreateTicket = () => {
     e.preventDefault();
     setSubmitError('');
 
-    // Step 1: Validate Form
     const validation = validateTicketForm(formData);
     if (!validation.isValid) {
       setErrors(validation.errors);
       return;
     }
 
-    // Step 2 & 3: Disable button and show loading state
     setIsSubmitting(true);
 
     try {
-      // Step 4: Send POST request
       const response = await createTicket({
         customer_name: formData.customerName.trim(),
         customer_email: formData.customerEmail.trim(),
@@ -60,18 +57,14 @@ const CreateTicket = () => {
       });
 
       const ticketId = response.ticket_id || response.id || response.ticketId;
-
-      // Step 5: Handle success with toast
       showToast(`Ticket ${ticketId ? `#${ticketId}` : ''} created successfully.`, 'success');
 
-      // Step 7: Navigate to the newly created ticket
       if (ticketId) {
         navigate(`/tickets/${ticketId}`);
       } else {
         navigate('/');
       }
     } catch (err) {
-      // Step 6: Handle failure without clearing the form
       const errorMsg = err.message || 'Unable to create ticket. Please check your information and try again.';
       setSubmitError(errorMsg);
       showToast(errorMsg, 'error');
@@ -83,78 +76,86 @@ const CreateTicket = () => {
   const backAction = (
     <Link
       to="/"
-      className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
     >
-      &larr; Back to Tickets
+      <ArrowLeft className="w-4 h-4" />
+      <span>Back to Tickets</span>
     </Link>
   );
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto space-y-6">
       <PageHeader
-        title="Create Support Ticket"
+        title="Create Ticket"
         description="Create a new customer support request."
         action={backAction}
       />
 
-      <div className="bg-white border border-slate-200 rounded-lg p-6 sm:p-8 shadow-sm">
+      <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 sm:p-8 shadow-subtle">
         {submitError && (
           <div
             role="alert"
-            className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-sm text-red-700"
+            className="mb-6 p-4 rounded-lg bg-red-950/20 border border-red-900/40 text-xs sm:text-sm text-red-300 flex items-start gap-2.5"
           >
-            {submitError}
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+            <div>{submitError}</div>
           </div>
         )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
-          <Input
-            label="Customer Name"
-            name="customerName"
-            value={formData.customerName}
-            onChange={handleChange}
-            placeholder="e.g. Rahul Sharma"
-            required
-            error={errors.customerName}
-            disabled={isSubmitting}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <Input
+              label="Customer Name"
+              name="customerName"
+              value={formData.customerName}
+              onChange={handleChange}
+              placeholder="e.g. Rahul Sharma"
+              helperText="Full name of the requesting customer"
+              required
+              error={errors.customerName}
+              disabled={isSubmitting}
+            />
+
+            <Input
+              label="Customer Email"
+              name="customerEmail"
+              type="email"
+              value={formData.customerEmail}
+              onChange={handleChange}
+              placeholder="e.g. rahul@example.com"
+              helperText="Used for customer communication"
+              required
+              error={errors.customerEmail}
+              disabled={isSubmitting}
+            />
+          </div>
 
           <Input
-            label="Customer Email"
-            name="customerEmail"
-            type="email"
-            value={formData.customerEmail}
-            onChange={handleChange}
-            placeholder="e.g. rahul@example.com"
-            required
-            error={errors.customerEmail}
-            disabled={isSubmitting}
-          />
-
-          <Input
-            label="Issue Title"
+            label="Subject"
             name="subject"
             value={formData.subject}
             onChange={handleChange}
-            placeholder="e.g. Payment failed during checkout"
+            placeholder="Brief summary of the issue"
+            helperText="Clear and concise summary of the problem"
             required
             error={errors.subject}
             disabled={isSubmitting}
           />
 
           <Textarea
-            label="Issue Description"
+            label="Description"
             name="description"
             rows={5}
             value={formData.description}
             onChange={handleChange}
-            placeholder="Detailed description of the customer issue..."
+            placeholder="Provide complete details regarding the support request..."
+            helperText="Include error messages, reproduction steps, or relevant context"
             required
             error={errors.description}
             disabled={isSubmitting}
           />
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
+          <div className="pt-4 border-t border-zinc-800/80 flex items-center justify-end gap-3">
             <Link to="/">
               <Button variant="ghost" disabled={isSubmitting}>
                 Cancel
@@ -165,7 +166,17 @@ const CreateTicket = () => {
               variant="primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Creating Ticket...' : 'Create Ticket'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Creating Ticket...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Create Ticket</span>
+                </>
+              )}
             </Button>
           </div>
         </form>

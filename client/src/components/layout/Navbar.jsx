@@ -1,56 +1,67 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { 
+  Menu, 
+  Plus, 
+  Bell, 
+  Search, 
+  Command,
+  Layers
+} from 'lucide-react';
 
-const Navbar = () => {
-  const navLinkClass = ({ isActive }) =>
-    `inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-      isActive
-        ? 'bg-slate-900 text-white'
-        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-    }`;
-
+const Navbar = ({ onToggleMobile }) => {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2.5">
-              <span className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
-                S
-              </span>
-              <span className="text-lg font-semibold text-slate-900 tracking-tight">
-                Support CRM
-              </span>
-            </Link>
+    <header className="h-14 border-b border-zinc-800/80 bg-[#111113]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 select-none">
+      {/* Left: Mobile hamburger & branding */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={onToggleMobile}
+          className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 md:hidden focus:outline-none"
+          aria-label="Open sidebar navigation"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
 
-            <nav className="hidden sm:flex items-center space-x-2" aria-label="Main Navigation">
-              <NavLink to="/" end className={navLinkClass}>
-                Tickets
-              </NavLink>
-              <NavLink to="/tickets/new" className={navLinkClass}>
-                Create Ticket
-              </NavLink>
-            </nav>
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="w-6 h-6 rounded bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+            <Layers className="w-3.5 h-3.5" />
           </div>
+          <span className="font-semibold text-sm text-zinc-100 tracking-tight">
+            Support CRM
+          </span>
+        </div>
 
-          <div className="flex items-center space-x-3">
-            <Link
-              to="/tickets/new"
-              className="inline-flex items-center justify-center px-3.5 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              + New Ticket
-            </Link>
-          </div>
+        {/* Desktop Quick Search Trigger Bar */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-zinc-400 text-xs w-64 md:w-80 cursor-default">
+          <Search className="w-3.5 h-3.5 text-zinc-500" />
+          <span className="text-zinc-500 flex-1">Search tickets, customer, ID...</span>
+          <kbd className="hidden lg:inline-flex items-center gap-0.5 text-[10px] font-mono text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700/60">
+            <Command className="w-2.5 h-2.5" /> K
+          </kbd>
         </div>
       </div>
-      {/* Mobile nav */}
-      <div className="sm:hidden border-t border-slate-100 px-4 py-2 flex space-x-2 bg-slate-50">
-        <NavLink to="/" end className={navLinkClass}>
-          Tickets
-        </NavLink>
-        <NavLink to="/tickets/new" className={navLinkClass}>
-          Create Ticket
-        </NavLink>
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2.5">
+        {/* Subtle notifications bell */}
+        <button
+          type="button"
+          className="relative p-2 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors focus:outline-none"
+          aria-label="View notifications"
+        >
+          <Bell className="w-4 h-4" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+        </button>
+
+        {/* Primary Action Button */}
+        <Link
+          to="/tickets/new"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 rounded-lg shadow-sm transition-all duration-150 border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>New Ticket</span>
+        </Link>
       </div>
     </header>
   );

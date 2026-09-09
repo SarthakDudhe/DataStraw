@@ -2,22 +2,27 @@ import React from 'react';
 
 export const TableSkeleton = ({ rows = 5 }) => {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden animate-pulse">
-      <div className="bg-slate-50 border-b border-slate-200 px-6 py-3.5 flex gap-4">
-        <div className="h-4 bg-slate-200 rounded w-20"></div>
-        <div className="h-4 bg-slate-200 rounded w-32"></div>
-        <div className="h-4 bg-slate-200 rounded flex-1"></div>
-        <div className="h-4 bg-slate-200 rounded w-24"></div>
-        <div className="h-4 bg-slate-200 rounded w-28"></div>
+    <div className="bg-[#111113] border border-zinc-800/80 rounded-xl shadow-subtle overflow-hidden">
+      {/* Table Header skeleton */}
+      <div className="bg-zinc-950/60 border-b border-zinc-800/80 px-6 py-3.5 flex items-center justify-between">
+        <div className="h-3.5 bg-zinc-800/60 rounded w-20 animate-pulse"></div>
+        <div className="h-3.5 bg-zinc-800/60 rounded w-36 animate-pulse"></div>
+        <div className="h-3.5 bg-zinc-800/60 rounded w-48 animate-pulse hidden sm:block"></div>
+        <div className="h-3.5 bg-zinc-800/60 rounded w-20 animate-pulse"></div>
+        <div className="h-3.5 bg-zinc-800/60 rounded w-24 animate-pulse"></div>
       </div>
-      <div className="divide-y divide-slate-100">
+      {/* Rows */}
+      <div className="divide-y divide-zinc-800/50">
         {Array.from({ length: rows }).map((_, idx) => (
-          <div key={idx} className="px-6 py-4 flex items-center gap-4">
-            <div className="h-4 bg-slate-200 rounded w-20"></div>
-            <div className="h-4 bg-slate-200 rounded w-32"></div>
-            <div className="h-4 bg-slate-200 rounded flex-1"></div>
-            <div className="h-5 bg-slate-200 rounded-full w-20"></div>
-            <div className="h-4 bg-slate-200 rounded w-28"></div>
+          <div key={idx} className="px-6 py-4 flex items-center justify-between gap-4 animate-pulse">
+            <div className="h-4 bg-zinc-800/50 rounded w-20"></div>
+            <div className="space-y-1.5 w-36">
+              <div className="h-3.5 bg-zinc-800/60 rounded w-full"></div>
+              <div className="h-2.5 bg-zinc-800/40 rounded w-2/3"></div>
+            </div>
+            <div className="h-3.5 bg-zinc-800/40 rounded w-48 hidden sm:block"></div>
+            <div className="h-5 bg-zinc-800/60 rounded-full w-20"></div>
+            <div className="h-3.5 bg-zinc-800/40 rounded w-24"></div>
           </div>
         ))}
       </div>
@@ -27,21 +32,21 @@ export const TableSkeleton = ({ rows = 5 }) => {
 
 export const CardSkeleton = ({ count = 3 }) => {
   return (
-    <div className="space-y-3 animate-pulse">
+    <div className="space-y-3">
       {Array.from({ length: count }).map((_, idx) => (
         <div
           key={idx}
-          className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm space-y-3"
+          className="bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle space-y-3 animate-pulse"
         >
           <div className="flex justify-between items-center">
-            <div className="h-4 bg-slate-200 rounded w-16"></div>
-            <div className="h-5 bg-slate-200 rounded-full w-20"></div>
+            <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+            <div className="h-5 bg-zinc-800/60 rounded-full w-16"></div>
           </div>
-          <div className="h-5 bg-slate-200 rounded w-3/4"></div>
-          <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-          <div className="pt-2 border-t border-slate-100 flex justify-between">
-            <div className="h-3 bg-slate-200 rounded w-28"></div>
-            <div className="h-3 bg-slate-200 rounded w-20"></div>
+          <div className="h-4 bg-zinc-800/60 rounded w-3/4"></div>
+          <div className="h-3 bg-zinc-800/40 rounded w-1/2"></div>
+          <div className="pt-2 border-t border-zinc-800/60 flex justify-between">
+            <div className="h-3 bg-zinc-800/40 rounded w-24"></div>
+            <div className="h-3 bg-zinc-800/40 rounded w-12"></div>
           </div>
         </div>
       ))}
@@ -55,8 +60,8 @@ const LoadingState = ({ message = 'Loading...', className = '' }) => {
       className={`flex flex-col items-center justify-center py-12 px-4 ${className}`}
       role="status"
     >
-      <div className="w-8 h-8 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
-      <p className="mt-3 text-sm text-slate-500 font-medium">{message}</p>
+      <div className="w-7 h-7 border-2 border-zinc-700 border-t-blue-500 rounded-full animate-spin"></div>
+      <p className="mt-3 text-xs font-medium text-zinc-400">{message}</p>
       <span className="sr-only">{message}</span>
     </div>
   );

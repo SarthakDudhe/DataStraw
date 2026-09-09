@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  Mail, 
+  Calendar, 
+  Clock, 
+  MessageSquare, 
+  Save, 
+  Loader2, 
+  User, 
+  Hash,
+  AlertCircle
+} from 'lucide-react';
 import { getTicket, updateTicket } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
 import { TICKET_STATUS, TICKET_STATUS_LIST } from '../utils/constants';
@@ -88,16 +100,16 @@ const TicketDetails = () => {
   // 1. Loading Skeleton State
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
-        <div className="h-5 bg-slate-200 rounded w-28"></div>
-        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
-          <div className="h-6 bg-slate-200 rounded w-1/4"></div>
-          <div className="h-8 bg-slate-200 rounded w-3/4"></div>
-          <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+      <div className="max-w-5xl mx-auto space-y-6 animate-pulse">
+        <div className="h-4 bg-zinc-800 rounded w-28"></div>
+        <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 space-y-4">
+          <div className="h-5 bg-zinc-800 rounded w-24"></div>
+          <div className="h-7 bg-zinc-800 rounded w-2/3"></div>
+          <div className="h-4 bg-zinc-800 rounded w-1/3"></div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-64 bg-white border border-slate-200 rounded-lg"></div>
-          <div className="h-64 bg-white border border-slate-200 rounded-lg"></div>
+          <div className="lg:col-span-2 h-72 bg-[#111113] border border-zinc-800/80 rounded-xl"></div>
+          <div className="h-72 bg-[#111113] border border-zinc-800/80 rounded-xl"></div>
         </div>
       </div>
     );
@@ -106,15 +118,18 @@ const TicketDetails = () => {
   // 2. Not Found State
   if (notFound) {
     return (
-      <div className="max-w-xl mx-auto text-center py-16 px-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-        <span className="text-4xl font-mono font-bold text-slate-400">404</span>
-        <h2 className="mt-2 text-xl font-bold text-slate-900">Ticket not found</h2>
-        <p className="mt-2 text-sm text-slate-500">
-          Ticket <code className="font-mono font-semibold">#{ticketId}</code> may have been deleted or does not exist.
+      <div className="max-w-md mx-auto text-center py-16 px-6 bg-[#111113] border border-zinc-800/80 rounded-xl shadow-subtle">
+        <span className="text-4xl font-mono font-bold text-zinc-500">404</span>
+        <h2 className="mt-2 text-lg font-bold text-zinc-100">Ticket not found</h2>
+        <p className="mt-2 text-xs sm:text-sm text-zinc-400">
+          Ticket <code className="font-mono text-zinc-300">#{ticketId}</code> could not be found or may have been removed.
         </p>
         <div className="mt-6">
           <Link to="/">
-            <Button variant="primary">&larr; Back to Tickets</Button>
+            <Button variant="primary">
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Back to Tickets
+            </Button>
           </Link>
         </div>
       </div>
@@ -124,12 +139,13 @@ const TicketDetails = () => {
   // 3. API Error State
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto space-y-4">
         <Link
           to="/"
-          className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
         >
-          &larr; Back to Tickets
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Tickets</span>
         </Link>
         <ErrorState
           title="Unable to load this ticket"
@@ -146,7 +162,7 @@ const TicketDetails = () => {
   const createdAt = ticket.created_at || ticket.createdAt;
   const updatedAt = ticket.updated_at || ticket.updatedAt;
 
-  // Process existing notes
+  // Normalize existing notes
   let existingNotes = [];
   if (Array.isArray(ticket.notes)) {
     existingNotes = ticket.notes;
@@ -155,61 +171,71 @@ const TicketDetails = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Back Navigation */}
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Navigation Back */}
       <div>
         <Link
           to="/"
-          className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors group"
         >
-          &larr; Back to Tickets
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          <span>Back to Tickets</span>
         </Link>
       </div>
 
-      {/* Ticket Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
+      {/* Main Ticket Banner Header */}
+      <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/80 pb-4 mb-4">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-sm font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded">
+            <span className="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20">
               #{currentTicketId}
             </span>
             <StatusBadge status={ticket.status} />
           </div>
-          <span className="text-xs text-slate-500">
-            Created: {formatDate(createdAt)}
-          </span>
+          <div className="flex items-center gap-2 text-xs text-zinc-500">
+            <Clock className="w-3.5 h-3.5 text-zinc-500" />
+            <span>Created {formatDate(createdAt)}</span>
+          </div>
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 break-words">
+        <h1 className="text-lg sm:text-2xl font-bold text-zinc-100 tracking-tight break-words">
           {ticket.subject}
         </h1>
       </div>
 
-      {/* Two-Column Details Layout */}
+      {/* Two-Column Workspace Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Description & Notes */}
+        {/* Left Column (2 spans): Description & Notes Activity */}
         <div className="lg:col-span-2 space-y-6">
           {/* Issue Description */}
-          <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle">
+            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
               Description
             </h2>
-            <div className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed break-words bg-slate-50/50 p-4 rounded-md border border-slate-100">
+            <div className="text-xs sm:text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed break-words bg-zinc-950/60 p-4 rounded-lg border border-zinc-800/60">
               {ticket.description || 'No description provided.'}
             </div>
           </section>
 
-          {/* Notes & Activity Log */}
-          <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-semibold text-slate-900">
-              Internal Notes & Comments
-            </h2>
+          {/* Activity / Notes Timeline */}
+          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-zinc-400" />
+                <h2 className="text-sm font-semibold text-zinc-100">
+                  Activity & Notes
+                </h2>
+              </div>
+              <span className="text-xs text-zinc-500">
+                {existingNotes.length} {existingNotes.length === 1 ? 'note' : 'notes'}
+              </span>
+            </div>
 
             {existingNotes.length === 0 ? (
-              <div className="text-center py-6 px-4 border border-dashed border-slate-200 rounded-md bg-slate-50/50">
-                <p className="text-xs text-slate-500">No notes yet.</p>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Add the first internal note below.
+              <div className="text-center py-8 px-4 border border-dashed border-zinc-800 rounded-lg bg-zinc-950/20">
+                <p className="text-xs text-zinc-400">No notes yet.</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">
+                  Add an internal note or status update in the control panel.
                 </p>
               </div>
             ) : (
@@ -217,16 +243,20 @@ const TicketDetails = () => {
                 {existingNotes.map((n, idx) => {
                   const noteText = typeof n === 'string' ? n : n.text || n.note;
                   const noteDate = typeof n === 'object' ? n.created_at || n.createdAt : null;
+
                   return (
                     <div
                       key={idx}
-                      className="p-4 bg-slate-50 rounded-md border border-slate-100 text-sm text-slate-800 break-words"
+                      className="p-4 bg-zinc-950/50 rounded-lg border border-zinc-800/60 text-xs sm:text-sm text-zinc-300 break-words"
                     >
-                      <p className="whitespace-pre-wrap leading-relaxed">{noteText}</p>
+                      <p className="whitespace-pre-wrap leading-relaxed text-zinc-200">
+                        {noteText}
+                      </p>
                       {noteDate && (
-                        <span className="block mt-2 text-xs text-slate-400">
-                          {formatDate(noteDate)}
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-zinc-500">
+                          <Clock className="w-3 h-3 text-zinc-500" />
+                          <span>{formatDate(noteDate)}</span>
+                        </div>
                       )}
                     </div>
                   );
@@ -239,55 +269,67 @@ const TicketDetails = () => {
         {/* Right Column: Customer Info & Status Update Controls */}
         <div className="space-y-6">
           {/* Customer Information Card */}
-          <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
-              Customer Information
+          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
+            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800/80 pb-2.5">
+              Customer Details
             </h2>
 
-            <div>
-              <span className="text-xs text-slate-500 block">Customer Name</span>
-              <p className="text-sm font-medium text-slate-900 mt-0.5">
-                {customerName}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-xs text-slate-500 block">Customer Email</span>
-              {customerEmail ? (
-                <a
-                  href={`mailto:${customerEmail}`}
-                  className="text-sm font-medium text-blue-600 hover:underline break-all mt-0.5 inline-block"
-                >
-                  {customerEmail}
-                </a>
-              ) : (
-                <p className="text-sm text-slate-400 mt-0.5">—</p>
-              )}
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 space-y-2 text-xs text-slate-500">
+            <div className="space-y-3">
               <div>
-                <span className="font-medium text-slate-600">Created:</span>{' '}
-                {formatDate(createdAt)}
+                <span className="text-[11px] text-zinc-500 uppercase tracking-wide block font-medium">
+                  Name
+                </span>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-semibold text-zinc-300">
+                    {customerName.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-zinc-100">
+                    {customerName}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[11px] text-zinc-500 uppercase tracking-wide block font-medium">
+                  Email
+                </span>
+                {customerEmail ? (
+                  <a
+                    href={`mailto:${customerEmail}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 break-all mt-1"
+                  >
+                    <Mail className="w-3.5 h-3.5 shrink-0" />
+                    <span>{customerEmail}</span>
+                  </a>
+                ) : (
+                  <span className="text-xs text-zinc-500 mt-1 block">—</span>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-zinc-800/80 space-y-2 text-xs text-zinc-500">
+              <div className="flex items-center justify-between">
+                <span>Created:</span>
+                <span className="text-zinc-300 font-mono text-[11px]">{formatDate(createdAt, false)}</span>
               </div>
               {updatedAt && (
-                <div>
-                  <span className="font-medium text-slate-600">Updated:</span>{' '}
-                  {formatDate(updatedAt)}
+                <div className="flex items-center justify-between">
+                  <span>Updated:</span>
+                  <span className="text-zinc-300 font-mono text-[11px]">{formatDate(updatedAt, false)}</span>
                 </div>
               )}
             </div>
           </section>
 
-          {/* Update Ticket Controls */}
-          <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-sm font-semibold text-slate-900 mb-4">
+          {/* Status & Update Controls */}
+          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle">
+            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-4 border-b border-zinc-800/80 pb-2.5">
               Update Ticket
             </h2>
 
             <form onSubmit={handleSaveChanges} className="space-y-4">
               <Select
-                label="Ticket Status"
+                label="Status"
                 name="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -301,7 +343,7 @@ const TicketDetails = () => {
                 rows={3}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Type internal note or update message..."
+                placeholder="Type internal note or update comment..."
                 disabled={isUpdating}
               />
 
@@ -311,7 +353,17 @@ const TicketDetails = () => {
                 className="w-full"
                 disabled={isUpdating}
               >
-                {isUpdating ? 'Saving Changes...' : 'Save Changes'}
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving Changes...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save Changes</span>
+                  </>
+                )}
               </Button>
             </form>
           </section>
