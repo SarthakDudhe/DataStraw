@@ -1,46 +1,5 @@
 import { KnowledgeArticle } from '../models/KnowledgeArticle.js';
-
-const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'this', 'that', 'from', 'have', 'your', 'are', 'not', 'but', 'into', 'when', 'will', 'unable', 'issue', 'help', 'please', 'about', 'during']);
-const STARTER_ARTICLES = [
-  {
-    slug: 'payment-failure-checklist',
-    title: 'Payment failure troubleshooting checklist',
-    summary: 'Confirm the error code, payment method, account state, and gateway health before escalating.',
-    content: 'Ask for the exact error code and timestamp. Confirm whether the failure affects one card or all methods. Check the payment gateway status and avoid requesting full card details in a support reply.',
-    tags: ['Billing', 'Payments'],
-    keywords: ['payment', 'checkout', 'card', 'billing', 'gateway', 'failed'],
-  },
-  {
-    slug: 'password-reset-and-login',
-    title: 'Login and password-reset recovery',
-    summary: 'Validate account identity, check reset-token expiry, and provide safe recovery steps.',
-    content: 'Confirm the account email, request the timestamp of the reset email, and check for a token-expiry or account-lock issue. Never request a password. Offer a new reset link only after identity checks are complete.',
-    tags: ['Account access'],
-    keywords: ['login', 'password', 'reset', 'token', 'access', 'locked'],
-  },
-  {
-    slug: 'incident-customer-update',
-    title: 'Writing a customer update during an incident',
-    summary: 'Acknowledge impact, state the current investigation status, and set the next update expectation.',
-    content: 'Use plain language. Confirm that the team is investigating, describe the affected capability without speculation, and commit to the next update window. Do not claim resolution until monitoring confirms recovery.',
-    tags: ['Incidents', 'Communication'],
-    keywords: ['outage', 'incident', 'down', 'status', 'update', 'investigating'],
-  },
-];
-
-const normalizeTerms = (value = '') => [...new Set(
-  value.toLowerCase().match(/[a-z0-9]{3,}/g)?.filter((term) => !STOP_WORDS.has(term)) || []
-)];
-
-const rankArticle = (article, terms) => {
-  const corpus = `${article.title} ${article.summary} ${article.tags.join(' ')} ${article.keywords.join(' ')}`.toLowerCase();
-  return terms.reduce((score, term) => score + (corpus.includes(term) ? 1 : 0), 0);
-};
-
-const ensureStarterArticles = async () => {
-  if (await KnowledgeArticle.exists({})) return;
-  await KnowledgeArticle.insertMany(STARTER_ARTICLES);
-};
+import { ensureStarterArticles, getKnowledgeSuggestionsForTicket, normalizeKnowledgeTerms, rankKnowledgeArticle } from '../services/knowledgeSuggestions.js';
 
 export const getKnowledgeArticles = async (req, res, next) => {
   try {
@@ -48,9 +7,9 @@ export const getKnowledgeArticles = async (req, res, next) => {
     const { status = 'Published', search = '' } = req.query;
     const query = status === 'All' ? {} : { status };
     const articles = await KnowledgeArticle.find(query).sort({ updated_at: -1 }).lean();
-    const terms = normalizeTerms(search);
+    const terms = normalizeKnowledgeTerms(search);
     const filtered = terms.length
-      ? articles.filter((article) => rankArticle(article, terms) > 0)
+      ? articles.filter((article) => rankKnowledgeArticle(article, terms) > 0)
       : articles;
     return res.json(filtered);
   } catch (error) {
@@ -60,14 +19,7 @@ export const getKnowledgeArticles = async (req, res, next) => {
 
 export const getKnowledgeSuggestions = async (req, res, next) => {
   try {
-    await ensureStarterArticles();
-    const terms = normalizeTerms(`${req.query.subject || ''} ${req.query.description || ''}`);
-    const articles = await KnowledgeArticle.find({ status: 'Published' }).lean();
-    const suggestions = articles
-      .map((article) => ({ ...article, relevance: rankArticle(article, terms) }))
-      .filter((article) => article.relevance > 0)
-      .sort((left, right) => right.relevance - left.relevance || right.helpful_count - left.helpful_count)
-      .slice(0, 3);
+    const suggestions = await getKnowledgeSuggestionsForTicket(req.query);
     return res.json(suggestions);
   } catch (error) {
     next(error);

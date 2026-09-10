@@ -1,4 +1,5 @@
 import { ai } from '../configs/gemini.js';
+import { getKnowledgeSuggestionsForTicket } from '../services/knowledgeSuggestions.js';
 
 // High-capacity model list with automatic fallback
 const MODELS_TO_TRY = ['gemini-3.5-flash-lite', 'gemini-3.6-flash'];
@@ -84,6 +85,10 @@ export const generateReply = async (req, res) => {
   const { subject, description, customer_name, replyType = 'investigating', tone = 'professional' } = req.body;
 
   try {
+    const sources = await getKnowledgeSuggestionsForTicket({ subject, description });
+    const knowledgeContext = sources.length
+      ? sources.map((article, index) => `${index + 1}. ${article.title}: ${article.content}`).join('\n')
+      : 'No approved knowledge article matched this case.';
     const prompt = `You are a professional customer support specialist.
 Draft an email response to the customer.
 
@@ -94,7 +99,11 @@ Ticket Details:
 - Desired Intent: ${replyType} (e.g. investigating the issue, fix deployed, or asking for more info)
 - Tone: ${tone} (e.g. professional, empathetic, or concise)
 
+Approved knowledge material:
+${knowledgeContext}
+
 Draft a polished, friendly, and complete support message signed off by "Customer Support Team". 
+Use the approved knowledge material when relevant. Do not invent policy or technical claims beyond it.
 Do not include subject lines or placeholders. Return only the message body.`;
 
     const { text, modelUsed } = await generateWithFallback(prompt);
@@ -103,6 +112,7 @@ Do not include subject lines or placeholders. Return only the message body.`;
       success: true,
       reply: text.trim(),
       model: modelUsed,
+      sources: sources.map(({ slug, title, summary }) => ({ slug, title, summary })),
     });
   } catch (error) {
     console.warn('Gemini Reply Fallback triggered:', error.message);
@@ -111,6 +121,7 @@ Do not include subject lines or placeholders. Return only the message body.`;
       success: true,
       reply: `Hi ${customer_name || 'there'},\n\nThank you for reaching out regarding "${subject || 'your ticket'}". We have logged your request and our technical team is currently reviewing the issue.\n\nWe will update you as soon as we have progress.\n\nBest regards,\nCustomer Support Team`,
       fallback: true,
+      sources: [],
     });
   }
 };
