@@ -20,11 +20,26 @@ const TicketCard = ({ ticket }) => {
       className="block bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:border-cyan-200 hover:bg-cyan-50/30 transition-all group"
     >
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-semibold text-cyan-700">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="font-mono text-xs font-semibold text-cyan-700">
             #{ticketId}
           </span>
           <SlaBadge createdAt={createdAt} status={ticket.status} compact />
+          {ticket.impact_level && (
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+              ticket.impact_level === 'Critical' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+              ticket.impact_level === 'High' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+              ticket.impact_level === 'Moderate' ? 'bg-cyan-50 text-cyan-700 border-cyan-200' :
+              'bg-slate-50 text-slate-600 border-slate-200'
+            }`}>
+              {ticket.impact_level} {typeof ticket.impact_score === 'number' ? `${ticket.impact_score}` : ''}
+            </span>
+          )}
+          {ticket.incident_id && (
+            <span className="font-mono text-[10px] font-semibold text-cyan-800 bg-cyan-100/70 border border-cyan-200 px-1.5 py-0.5 rounded">
+              {ticket.incident_id}
+            </span>
+          )}
         </div>
         <StatusBadge status={ticket.status} />
       </div>

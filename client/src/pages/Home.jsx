@@ -31,6 +31,8 @@ const Home = () => {
     setSearchTerm,
     statusFilter,
     setStatusFilter,
+    impactFilter,
+    setImpactFilter,
     tagFilter,
     setTagFilter,
     sortBy,
@@ -43,6 +45,7 @@ const Home = () => {
   const isFiltered = Boolean(
     searchTerm.trim() || 
     (statusFilter && statusFilter !== 'All Statuses' && statusFilter !== 'All') ||
+    (impactFilter && impactFilter !== 'All Impacts' && impactFilter !== 'All') ||
     (tagFilter && tagFilter !== 'all')
   );
 
@@ -79,7 +82,12 @@ const Home = () => {
   const attentionTickets = useMemo(
     () => tickets
       .filter((ticket) => ticket.status !== 'Closed')
-      .sort((a, b) => new Date(a.created_at || a.createdAt) - new Date(b.created_at || b.createdAt))
+      .sort((a, b) => {
+        const aImpact = typeof a.impact_score === 'number' ? a.impact_score : 0;
+        const bImpact = typeof b.impact_score === 'number' ? b.impact_score : 0;
+        if (bImpact !== aImpact) return bImpact - aImpact;
+        return new Date(a.created_at || a.createdAt) - new Date(b.created_at || b.createdAt);
+      })
       .slice(0, 3),
     [tickets]
   );
@@ -230,6 +238,22 @@ const Home = () => {
             onChange={setStatusFilter}
           />
 
+          {/* Impact Filter Dropdown */}
+          <div className="relative">
+            <select
+              id="impact-select"
+              value={impactFilter}
+              onChange={(e) => setImpactFilter(e.target.value)}
+              className="appearance-none px-3 py-2 pr-7 bg-white border border-slate-200 hover:border-slate-300 rounded-md text-xs sm:text-sm text-slate-600 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-colors cursor-pointer"
+            >
+              <option value="All Impacts">All Impacts</option>
+              <option value="Critical">Impact: Critical</option>
+              <option value="High">Impact: High</option>
+              <option value="Moderate">Impact: Moderate</option>
+              <option value="Normal">Impact: Normal</option>
+            </select>
+          </div>
+
           {/* Sorting Dropdown */}
           <div className="relative">
             <select
@@ -239,6 +263,7 @@ const Home = () => {
               className="appearance-none px-3 py-2 pr-7 bg-white border border-slate-200 hover:border-slate-300 rounded-md text-xs sm:text-sm text-slate-600 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-colors cursor-pointer"
             >
               <option value="newest">Sort: Newest</option>
+              <option value="impact">Sort: Highest Impact</option>
               <option value="urgent_sla">Sort: Most Urgent SLA</option>
               <option value="oldest">Sort: Oldest</option>
               <option value="recently_updated">Sort: Recently Updated</option>

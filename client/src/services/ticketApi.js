@@ -82,6 +82,12 @@ export const ticketApi = {
     if (params.status && params.status !== 'All' && params.status !== 'All Statuses') {
       queryParams.append('status', params.status);
     }
+    if (params.impact && params.impact !== 'All' && params.impact !== 'All Impacts') {
+      queryParams.append('impact', params.impact);
+    }
+    if (params.sort) {
+      queryParams.append('sort', params.sort);
+    }
 
     const query = queryParams.toString();
     const url = `${API_BASE_URL}/api/tickets${query ? `?${query}` : ''}`;
@@ -101,6 +107,12 @@ export const ticketApi = {
     if (params.status && params.status !== 'All' && params.status !== 'All Statuses') {
       list = list.filter(
         (t) => (t.status || '').toLowerCase() === params.status.toLowerCase()
+      );
+    }
+
+    if (params.impact && params.impact !== 'All' && params.impact !== 'All Impacts') {
+      list = list.filter(
+        (t) => (t.impact_level || '').toLowerCase() === params.impact.toLowerCase()
       );
     }
 
