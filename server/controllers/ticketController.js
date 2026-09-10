@@ -1,5 +1,6 @@
 import { Ticket, getNextTicketId } from '../models/Ticket.js';
 import { Note } from '../models/Note.js';
+import { attachTicketToIncident, findPotentialDuplicates } from '../services/incidentDetection.js';
 
 // Basic email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -56,10 +57,12 @@ export const createTicket = async (req, res, next) => {
     });
 
     await ticket.save();
+    const incident = await attachTicketToIncident(ticket);
 
     return res.status(201).json({
       ticket_id: ticket.ticket_id,
       created_at: ticket.created_at,
+      incident_id: incident?.incident_id || null,
     });
   } catch (error) {
     next(error);
@@ -102,7 +105,7 @@ export const getTickets = async (req, res, next) => {
 
     const tickets = await Ticket.find(query)
       .sort({ created_at: -1 })
-      .select('ticket_id customer_name subject status created_at -_id')
+      .select('ticket_id customer_name customer_email subject description status incident_id created_at updated_at -_id')
       .lean();
 
     return res.json(tickets);
@@ -124,7 +127,7 @@ export const getTicketById = async (req, res, next) => {
     }
 
     const ticket = await Ticket.findOne({ ticket_id })
-      .select('ticket_id customer_name customer_email subject description status created_at updated_at -_id')
+      .select('ticket_id customer_name customer_email subject description status incident_id created_at updated_at -_id')
       .lean();
 
     if (!ticket) {
@@ -137,9 +140,12 @@ export const getTicketById = async (req, res, next) => {
       .select('note_text created_at -_id')
       .lean();
 
+    const potential_duplicates = await findPotentialDuplicates(ticket);
+
     return res.json({
       ...ticket,
       notes,
+      potential_duplicates,
     });
   } catch (error) {
     next(error);

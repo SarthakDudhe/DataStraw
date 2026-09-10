@@ -53,6 +53,11 @@ const ticketSchema = new mongoose.Schema(
       default: 'Open',
       index: true,
     },
+    incident_id: {
+      type: String,
+      default: null,
+      index: true,
+    },
     created_at: {
       type: Date,
       default: Date.now,
