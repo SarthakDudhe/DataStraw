@@ -6,6 +6,7 @@ import { connectDB } from './configs/db.js';
 import ticketRoutes from './routes/ticketRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import operationsRoutes from './routes/operationsRoutes.js';
+import knowledgeRoutes from './routes/knowledgeRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/operations', operationsRoutes);
+app.use('/api/knowledge', knowledgeRoutes);
 
 // Root informational endpoint
 app.get('/', (req, res) => {
