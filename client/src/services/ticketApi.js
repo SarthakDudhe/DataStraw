@@ -291,6 +291,22 @@ export const ticketApi = {
     if (!response.ok) throw new Error(`Failed to load knowledge suggestions (${response.status})`);
     return response.json();
   },
+
+  async getIncidents() {
+    const response = await fetch(`${API_BASE_URL}/api/operations/incidents`);
+    if (!response.ok) throw new Error(`Failed to load incidents (${response.status})`);
+    return response.json();
+  },
+
+  async updateIncident(incidentId, payload) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/incidents/${encodeURIComponent(incidentId)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error(`Failed to update incident (${response.status})`);
+    return response.json();
+  },
 };
 
 export const { 
@@ -301,5 +317,7 @@ export const {
   aiSummarizeTicket, 
   aiGenerateReply,
   getTicketImpact,
-  getKnowledgeSuggestions
+  getKnowledgeSuggestions,
+  getIncidents,
+  updateIncident
 } = ticketApi;

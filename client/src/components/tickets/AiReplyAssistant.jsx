@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Loader2, Check } from 'lucide-react';
+import { BookOpen, Sparkles, Loader2 } from 'lucide-react';
 import { aiGenerateReply } from '../../services/ticketApi';
 import { generateSmartReply } from '../../utils/aiCopilot';
 
@@ -7,6 +7,7 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
   const [tone, setTone] = useState('professional');
   const [showOptions, setShowOptions] = useState(false);
   const [generatingType, setGeneratingType] = useState(null);
+  const [sources, setSources] = useState([]);
 
   const handleApply = async (typeToApply) => {
     setGeneratingType(typeToApply);
@@ -23,6 +24,7 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
 
       if (res?.success && res?.reply) {
         onInsertReply(res.reply);
+        setSources(Array.isArray(res.sources) ? res.sources : []);
         return;
       }
     } catch {
@@ -33,6 +35,7 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
 
     // Fallback template engine
     const fallbackText = generateSmartReply(ticket, typeToApply, tone);
+    setSources([]);
     onInsertReply(fallbackText);
   };
 
@@ -133,6 +136,22 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
               </p>
             </button>
           </div>
+
+          {sources.length > 0 && (
+            <div className="border-t border-slate-200 pt-2.5">
+              <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-slate-600">
+                <BookOpen className="h-3.5 w-3.5 text-cyan-700" />
+                <span>Grounded in approved knowledge</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {sources.map((source) => (
+                  <span key={source.slug} className="rounded border border-cyan-100 bg-white px-2 py-1 text-[10px] font-medium text-cyan-800">
+                    {source.title}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
