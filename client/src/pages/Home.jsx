@@ -7,7 +7,9 @@ import {
   CheckCircle2, 
   CircleDot,
   RotateCcw,
-  Download
+  Download,
+  AlertTriangle,
+  ArrowUpRight
 } from 'lucide-react';
 import { useTickets } from '../hooks/useTickets';
 import PageHeader from '../components/common/PageHeader';
@@ -74,22 +76,30 @@ const Home = () => {
     };
   }, [tickets, totalCount]);
 
+  const attentionTickets = useMemo(
+    () => tickets
+      .filter((ticket) => ticket.status !== 'Closed')
+      .sort((a, b) => new Date(a.created_at || a.createdAt) - new Date(b.created_at || b.createdAt))
+      .slice(0, 3),
+    [tickets]
+  );
+
   const newTicketAction = (
     <div className="flex items-center gap-2">
       <button
         type="button"
         onClick={handleExportCsv}
         disabled={loading || tickets.length === 0}
-        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-zinc-300 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg shadow-sm transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-md transition-colors disabled:opacity-50"
         title="Download CSV of current tickets"
       >
-        <Download className="w-4 h-4 text-zinc-400" />
+        <Download className="w-4 h-4 text-slate-500" />
         <span className="hidden sm:inline">Export CSV</span>
       </button>
 
       <Link
         to="/tickets/new"
-        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 rounded-lg shadow-sm border border-blue-500/30 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+        className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white bg-[#142a43] hover:bg-[#203a58] rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
       >
         <Plus className="w-4 h-4" />
         <span>Create Ticket</span>
@@ -98,11 +108,11 @@ const Home = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {/* Page Header */}
       <PageHeader
-        title="Support Tickets"
-        description="Manage customer support requests and track their progress."
+        title="Customer inbox"
+        description="A focused view of conversations that need your team next."
         action={newTicketAction}
       />
 
@@ -114,15 +124,15 @@ const Home = () => {
           onClick={() => setStatusFilter('All Statuses')}
           className={`p-3.5 rounded-xl border transition-all text-left group select-none ${
             statusFilter === 'All Statuses' || statusFilter === 'All'
-              ? 'bg-zinc-900/90 border-blue-500/40 shadow-subtle'
-              : 'bg-[#111113] border-zinc-800/80 hover:border-zinc-700/80 hover:bg-zinc-900/40'
+              ? 'bg-cyan-50 border-cyan-300 shadow-sm'
+              : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
           }`}
         >
-          <div className="flex items-center justify-between text-zinc-500 text-xs font-medium">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Total Tickets</span>
-            <Layers className="w-4 h-4 text-zinc-400 group-hover:text-zinc-200 transition-colors" />
+            <Layers className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors" />
           </div>
-          <div className="mt-2 text-xl font-bold text-zinc-100 tracking-tight">
+          <div className="mt-2 text-xl font-bold text-slate-900 tracking-tight">
             {loading ? '—' : stats.total}
           </div>
         </button>
@@ -133,15 +143,15 @@ const Home = () => {
           onClick={() => setStatusFilter('Open')}
           className={`p-3.5 rounded-xl border transition-all text-left group select-none ${
             statusFilter === 'Open'
-              ? 'bg-blue-500/10 border-blue-500/40 shadow-subtle'
-              : 'bg-[#111113] border-zinc-800/80 hover:border-blue-500/30 hover:bg-zinc-900/40'
+              ? 'bg-cyan-50 border-cyan-300 shadow-sm'
+              : 'bg-white border-slate-200 hover:border-cyan-200 hover:shadow-sm'
           }`}
         >
-          <div className="flex items-center justify-between text-blue-400/80 text-xs font-medium">
+          <div className="flex items-center justify-between text-cyan-700 text-xs font-medium">
             <span>Open</span>
-            <CircleDot className="w-4 h-4 text-blue-400" />
+            <CircleDot className="w-4 h-4 text-cyan-600" />
           </div>
-          <div className="mt-2 text-xl font-bold text-blue-400 tracking-tight">
+          <div className="mt-2 text-xl font-bold text-cyan-700 tracking-tight">
             {loading ? '—' : stats.open}
           </div>
         </button>
@@ -152,15 +162,15 @@ const Home = () => {
           onClick={() => setStatusFilter('In Progress')}
           className={`p-3.5 rounded-xl border transition-all text-left group select-none ${
             statusFilter === 'In Progress'
-              ? 'bg-amber-500/10 border-amber-500/40 shadow-subtle'
-              : 'bg-[#111113] border-zinc-800/80 hover:border-amber-500/30 hover:bg-zinc-900/40'
+              ? 'bg-amber-50 border-amber-300 shadow-sm'
+              : 'bg-white border-slate-200 hover:border-amber-200 hover:shadow-sm'
           }`}
         >
-          <div className="flex items-center justify-between text-amber-400/80 text-xs font-medium">
+          <div className="flex items-center justify-between text-amber-700 text-xs font-medium">
             <span>In Progress</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+            <Clock className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="mt-2 text-xl font-bold text-amber-400 tracking-tight">
+          <div className="mt-2 text-xl font-bold text-amber-700 tracking-tight">
             {loading ? '—' : stats.inProgress}
           </div>
         </button>
@@ -171,22 +181,40 @@ const Home = () => {
           onClick={() => setStatusFilter('Closed')}
           className={`p-3.5 rounded-xl border transition-all text-left group select-none ${
             statusFilter === 'Closed'
-              ? 'bg-emerald-500/10 border-emerald-500/40 shadow-subtle'
-              : 'bg-[#111113] border-zinc-800/80 hover:border-emerald-500/30 hover:bg-zinc-900/40'
+              ? 'bg-emerald-50 border-emerald-300 shadow-sm'
+              : 'bg-white border-slate-200 hover:border-emerald-200 hover:shadow-sm'
           }`}
         >
-          <div className="flex items-center justify-between text-emerald-400/80 text-xs font-medium">
+          <div className="flex items-center justify-between text-emerald-700 text-xs font-medium">
             <span>Closed</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="mt-2 text-xl font-bold text-emerald-400 tracking-tight">
+          <div className="mt-2 text-xl font-bold text-emerald-700 tracking-tight">
             {loading ? '—' : stats.closed}
           </div>
         </button>
       </div>
 
+      {attentionTickets.length > 0 && (
+        <section className="ops-panel overflow-hidden">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-rose-50 text-rose-600"><AlertTriangle className="h-4 w-4" /></span>
+              <div><p className="text-sm font-semibold text-slate-900">Attention queue</p><p className="text-xs text-slate-500">Oldest unresolved conversations, ready for a decision.</p></div>
+            </div>
+            <span className="hidden sm:block text-xs font-medium text-slate-500">{attentionTickets.length} requiring review</span>
+          </div>
+          <div className="grid divide-y divide-slate-100 md:grid-cols-3 md:divide-x md:divide-y-0">
+            {attentionTickets.map((ticket) => {
+              const id = ticket.ticket_id || ticket.id;
+              return <Link key={id} to={`/tickets/${id}`} className="group flex min-w-0 items-center justify-between gap-3 px-5 py-4 hover:bg-slate-50 transition-colors"><div className="min-w-0"><p className="font-mono text-[11px] font-semibold text-cyan-700">#{id}</p><p className="mt-1 truncate text-sm font-semibold text-slate-800 group-hover:text-cyan-700">{ticket.subject}</p><p className="mt-1 text-xs text-slate-500">{ticket.customer_name || ticket.customerName}</p></div><ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 group-hover:text-cyan-600" /></Link>;
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Toolbar: Search, Filters & Sorting */}
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-3.5 shadow-subtle space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3">
+      <div className="ops-panel p-3.5 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:justify-between sm:gap-3">
         <div className="flex-1 max-w-md">
           <SearchBar
             value={searchTerm}
@@ -208,12 +236,12 @@ const Home = () => {
               id="sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="appearance-none px-3 py-2 pr-7 bg-zinc-950/80 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs sm:text-sm text-zinc-300 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-colors shadow-subtle cursor-pointer"
+              className="appearance-none px-3 py-2 pr-7 bg-white border border-slate-200 hover:border-slate-300 rounded-md text-xs sm:text-sm text-slate-600 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 transition-colors cursor-pointer"
             >
-              <option value="newest" className="bg-[#111113] text-zinc-100">Sort: Newest</option>
-              <option value="urgent_sla" className="bg-[#111113] text-amber-400 font-medium">Sort: Most Urgent SLA ⚡</option>
-              <option value="oldest" className="bg-[#111113] text-zinc-100">Sort: Oldest</option>
-              <option value="recently_updated" className="bg-[#111113] text-zinc-100">Sort: Recently Updated</option>
+              <option value="newest">Sort: Newest</option>
+              <option value="urgent_sla">Sort: Most Urgent SLA</option>
+              <option value="oldest">Sort: Oldest</option>
+              <option value="recently_updated">Sort: Recently Updated</option>
             </select>
           </div>
         </div>
@@ -221,7 +249,7 @@ const Home = () => {
 
       {/* Category Tag Pills */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-        <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mr-1 shrink-0">
+        <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mr-1 shrink-0">
           Category:
         </span>
         {AVAILABLE_TAGS.map((tag) => {
@@ -233,8 +261,8 @@ const Home = () => {
               onClick={() => setTagFilter(tag.id)}
               className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all shrink-0 border ${
                 isActive
-                  ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
-                  : 'bg-[#111113] hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border-zinc-800/80'
+                  ? 'bg-[#142a43] text-white border-[#142a43] shadow-sm'
+                  : 'bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border-slate-200'
               }`}
             >
               {tag.label}
@@ -245,9 +273,9 @@ const Home = () => {
 
       {/* Active filter count & reset */}
       {!loading && !error && (
-        <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
+        <div className="flex items-center justify-between text-xs text-slate-500 px-1">
           <span>
-            Showing <strong className="text-zinc-200 font-semibold">{totalCount}</strong>{' '}
+            Showing <strong className="text-slate-800 font-semibold">{totalCount}</strong>{' '}
             {totalCount === 1 ? 'ticket' : 'tickets'}
             {isFiltered && ' (filtered)'}
           </span>
@@ -255,7 +283,7 @@ const Home = () => {
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              className="inline-flex items-center gap-1 text-cyan-700 hover:text-cyan-800 font-medium transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset filters</span>

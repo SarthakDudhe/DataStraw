@@ -3,23 +3,23 @@ import { TICKET_STATUS } from '../../utils/constants';
 
 const statusStyles = {
   [TICKET_STATUS.OPEN]: {
-    container: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    dot: 'bg-blue-400',
+    container: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    dot: 'bg-cyan-600',
   },
   [TICKET_STATUS.IN_PROGRESS]: {
-    container: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    dot: 'bg-amber-400',
+    container: 'bg-amber-50 text-amber-700 border-amber-200',
+    dot: 'bg-amber-600',
   },
   [TICKET_STATUS.CLOSED]: {
-    container: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    dot: 'bg-emerald-400',
+    container: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dot: 'bg-emerald-600',
   },
 };
 
 const StatusBadge = ({ status, className = '' }) => {
   const current = statusStyles[status] || {
-    container: 'bg-zinc-800/60 text-zinc-400 border-zinc-700/40',
-    dot: 'bg-zinc-500',
+    container: 'bg-slate-100 text-slate-600 border-slate-200',
+    dot: 'bg-slate-500',
   };
 
   return (

@@ -15,7 +15,7 @@ const AppLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[#09090B] text-zinc-100 antialiased font-sans">
+    <div className="min-h-screen flex bg-[#f4f7fb] text-slate-900 antialiased font-sans">
       {/* Persistent Left Sidebar */}
       <Sidebar
         isMobileOpen={mobileMenuOpen}
