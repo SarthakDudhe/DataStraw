@@ -5,6 +5,7 @@ import cors from 'cors';
 import { connectDB } from './configs/db.js';
 import ticketRoutes from './routes/ticketRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import operationsRoutes from './routes/operationsRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.get('/api/health', (req, res) => {
 // Mount Routes
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/operations', operationsRoutes);
 
 // Root informational endpoint
 app.get('/', (req, res) => {
