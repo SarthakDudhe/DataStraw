@@ -3,14 +3,14 @@ import { Ticket } from '../models/Ticket.js';
 
 const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'this', 'that', 'from', 'have', 'your', 'are', 'not', 'but', 'into', 'when', 'will', 'unable', 'issue', 'help', 'please', 'about', 'during']);
 
-const getTerms = (ticket) => new Set(
+export const getTerms = (ticket) => new Set(
   `${ticket.subject || ''} ${ticket.description || ''}`
     .toLowerCase()
     .match(/[a-z0-9]{3,}/g)
     ?.filter((term) => !STOP_WORDS.has(term)) || []
 );
 
-const similarity = (left, right) => {
+export const similarity = (left, right) => {
   const shared = [...left].filter((term) => right.has(term));
   const union = new Set([...left, ...right]);
   return { shared, score: union.size ? shared.length / union.size : 0 };
@@ -56,7 +56,7 @@ export const attachTicketToIncident = async (ticket) => {
     const incident = await Incident.findOneAndUpdate(
       { incident_id: match.incident_id },
       { $addToSet: { ticket_ids: ticket.ticket_id }, $set: { updated_at: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     ticket.incident_id = match.incident_id;
     await ticket.save();
