@@ -209,8 +209,8 @@ const TicketDetails = () => {
       </div>
 
       {/* Main Ticket Banner Header */}
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/80 pb-4 mb-4">
+      <div className="ops-panel p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
           <div className="flex items-center gap-3">
             <span className="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/20">
               #{currentTicketId}
@@ -218,13 +218,13 @@ const TicketDetails = () => {
             <StatusBadge status={ticket.status} />
             <SlaBadge createdAt={createdAt} status={ticket.status} />
           </div>
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
-            <Clock className="w-3.5 h-3.5 text-zinc-500" />
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
             <span>Created {formatDate(createdAt)}</span>
           </div>
         </div>
 
-        <h1 className="text-lg sm:text-2xl font-bold text-zinc-100 tracking-tight break-words">
+        <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight break-words">
           {ticket.subject}
         </h1>
       </div>
@@ -237,33 +237,33 @@ const TicketDetails = () => {
           <AiTicketSummarizer ticket={ticket} />
 
           {/* Issue Description */}
-          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
+          <section className="ops-panel p-6">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
               Description
             </h2>
-            <div className="text-xs sm:text-sm text-zinc-200 whitespace-pre-wrap leading-relaxed break-words bg-zinc-950/60 p-4 rounded-lg border border-zinc-800/60">
+            <div className="text-xs sm:text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words bg-slate-50 p-4 rounded-md border border-slate-100">
               {ticket.description || 'No description provided.'}
             </div>
           </section>
 
           {/* Activity / Notes Timeline */}
-          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 shadow-subtle space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+          <section className="ops-panel p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-zinc-400" />
-                <h2 className="text-sm font-semibold text-zinc-100">
+                <MessageSquare className="w-4 h-4 text-slate-500" />
+                <h2 className="text-sm font-semibold text-slate-900">
                   Activity & Notes
                 </h2>
               </div>
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-slate-500">
                 {existingNotes.length} {existingNotes.length === 1 ? 'note' : 'notes'}
               </span>
             </div>
 
             {existingNotes.length === 0 ? (
-              <div className="text-center py-8 px-4 border border-dashed border-zinc-800 rounded-lg bg-zinc-950/20">
-                <p className="text-xs text-zinc-400">No notes yet.</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">
+              <div className="text-center py-8 px-4 border border-dashed border-slate-200 rounded-md bg-slate-50">
+                <p className="text-xs text-slate-600">No notes yet.</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
                   Use the control panel on the right to add an internal note or status update.
                 </p>
               </div>
@@ -276,14 +276,14 @@ const TicketDetails = () => {
                   return (
                     <div
                       key={idx}
-                      className="p-4 bg-zinc-950/50 rounded-lg border border-zinc-800/60 text-xs sm:text-sm text-zinc-300 break-words"
+                      className="p-4 bg-slate-50 rounded-md border border-slate-100 text-xs sm:text-sm text-slate-700 break-words"
                     >
-                      <p className="whitespace-pre-wrap leading-relaxed text-zinc-200">
+                      <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
                         {noteText}
                       </p>
                       {noteDate && (
-                        <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-zinc-500">
-                          <Clock className="w-3 h-3 text-zinc-500" />
+                        <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-slate-500">
+                          <Clock className="w-3 h-3 text-slate-400" />
                           <span>{formatDate(noteDate)}</span>
                         </div>
                       )}
@@ -298,28 +298,28 @@ const TicketDetails = () => {
         {/* Right Column: Customer Info & Status Update Controls */}
         <div className="space-y-6">
           {/* Customer Information Card */}
-          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800/80 pb-2.5">
+          <section className="ops-panel p-5 space-y-4">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-2.5">
               Customer Details
             </h2>
 
             <div className="space-y-3">
               <div>
-                <span className="text-[11px] text-zinc-500 uppercase tracking-wide block font-medium">
+                <span className="text-[11px] text-slate-500 uppercase tracking-wide block font-medium">
                   Name
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-semibold text-zinc-300">
+                  <div className="w-6 h-6 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-[10px] font-semibold text-amber-800">
                     {customerName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-zinc-100">
+                  <span className="text-sm font-semibold text-slate-800">
                     {customerName}
                   </span>
                 </div>
               </div>
 
               <div>
-                <span className="text-[11px] text-zinc-500 uppercase tracking-wide block font-medium">
+                <span className="text-[11px] text-slate-500 uppercase tracking-wide block font-medium">
                   Email
                 </span>
                 {customerEmail ? (
@@ -331,20 +331,20 @@ const TicketDetails = () => {
                     <span>{customerEmail}</span>
                   </a>
                 ) : (
-                  <span className="text-xs text-zinc-500 mt-1 block">—</span>
+                  <span className="text-xs text-slate-500 mt-1 block">—</span>
                 )}
               </div>
             </div>
 
-            <div className="pt-3 border-t border-zinc-800/80 space-y-2 text-xs text-zinc-500">
+            <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-500">
               <div className="flex items-center justify-between">
                 <span>Created:</span>
-                <span className="text-zinc-300 font-mono text-[11px]">{formatDate(createdAt, false)}</span>
+                <span className="text-slate-700 font-mono text-[11px]">{formatDate(createdAt, false)}</span>
               </div>
               {updatedAt && (
                 <div className="flex items-center justify-between">
                   <span>Updated:</span>
-                  <span className="text-zinc-300 font-mono text-[11px]">{formatDate(updatedAt, false)}</span>
+                  <span className="text-slate-700 font-mono text-[11px]">{formatDate(updatedAt, false)}</span>
                 </div>
               )}
             </div>
@@ -357,14 +357,14 @@ const TicketDetails = () => {
           />
 
           {/* Status & Update Controls with AI Reply Assistant */}
-          <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
-            <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800/80 pb-2.5">
+          <section className="ops-panel p-5 space-y-4">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-2.5">
               Update Ticket
             </h2>
 
             {/* Quick 1-Click Status Transitions */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wide block">
+              <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide block">
                 Quick Actions
               </span>
               <div className="flex items-center gap-2 flex-wrap">
