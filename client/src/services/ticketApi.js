@@ -307,6 +307,23 @@ export const ticketApi = {
     if (!response.ok) throw new Error(`Failed to update incident (${response.status})`);
     return response.json();
   },
+
+  async getKnowledgeArticles(search = '') {
+    const query = new URLSearchParams({ search });
+    const response = await fetch(`${API_BASE_URL}/api/knowledge?${query.toString()}`);
+    if (!response.ok) throw new Error(`Failed to load knowledge articles (${response.status})`);
+    return response.json();
+  },
+
+  async createKnowledgeArticle(payload) {
+    const response = await fetch(`${API_BASE_URL}/api/knowledge`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error(`Failed to create knowledge article (${response.status})`);
+    return response.json();
+  },
 };
 
 export const { 
@@ -319,5 +336,7 @@ export const {
   getTicketImpact,
   getKnowledgeSuggestions,
   getIncidents,
-  updateIncident
+  updateIncident,
+  getKnowledgeArticles,
+  createKnowledgeArticle
 } = ticketApi;

@@ -9,6 +9,7 @@ import CreateTicket from '../pages/CreateTicket';
 import TicketDetails from '../pages/TicketDetails';
 import Analytics from '../pages/Analytics';
 import Incidents from '../pages/Incidents';
+import KnowledgeCenter from '../pages/KnowledgeCenter';
 import NotFound from '../pages/NotFound';
 import KeyboardShortcutsModal from '../components/common/KeyboardShortcutsModal';
 
@@ -34,6 +35,7 @@ const AppLayout = () => {
               <Route path="/tickets/:ticketId" element={<TicketDetails />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/incidents" element={<Incidents />} />
+              <Route path="/knowledge" element={<KnowledgeCenter />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </PageContainer>
