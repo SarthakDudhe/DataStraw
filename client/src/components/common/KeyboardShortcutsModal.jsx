@@ -7,6 +7,7 @@ const SHORTCUTS = [
   { key: 'c', description: 'Create new ticket' },
   { key: 'g then h', description: 'Go to Tickets Dashboard' },
   { key: 'g then a', description: 'Go to Analytics & SLA' },
+  { key: 'g then i', description: 'Go to Incidents' },
   { key: '?', description: 'Toggle this keyboard shortcuts cheatsheet' },
   { key: 'Esc', description: 'Close modal or blur active input' },
 ];
@@ -79,6 +80,10 @@ export const KeyboardShortcutsModal = () => {
         } else if (e.key === 'a' || e.key === 'A') {
           e.preventDefault();
           navigate('/analytics');
+          setLastKey('');
+        } else if (e.key === 'i' || e.key === 'I') {
+          e.preventDefault();
+          navigate('/incidents');
           setLastKey('');
         }
       }

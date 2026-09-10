@@ -8,6 +8,7 @@ import Home from '../pages/Home';
 import CreateTicket from '../pages/CreateTicket';
 import TicketDetails from '../pages/TicketDetails';
 import Analytics from '../pages/Analytics';
+import Incidents from '../pages/Incidents';
 import NotFound from '../pages/NotFound';
 import KeyboardShortcutsModal from '../components/common/KeyboardShortcutsModal';
 
@@ -32,6 +33,7 @@ const AppLayout = () => {
               <Route path="/tickets/new" element={<CreateTicket />} />
               <Route path="/tickets/:ticketId" element={<TicketDetails />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/incidents" element={<Incidents />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </PageContainer>
