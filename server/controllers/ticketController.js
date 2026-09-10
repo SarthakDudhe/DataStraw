@@ -1,6 +1,7 @@
 import { Ticket, getNextTicketId } from '../models/Ticket.js';
 import { Note } from '../models/Note.js';
 import { attachTicketToIncident, findPotentialDuplicates } from '../services/incidentDetection.js';
+import { refreshTicketImpact } from '../services/impactScoring.js';
 
 // Basic email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,6 +59,7 @@ export const createTicket = async (req, res, next) => {
 
     await ticket.save();
     const incident = await attachTicketToIncident(ticket);
+    await refreshTicketImpact(ticket.ticket_id);
 
     return res.status(201).json({
       ticket_id: ticket.ticket_id,
@@ -75,7 +77,7 @@ export const createTicket = async (req, res, next) => {
  */
 export const getTickets = async (req, res, next) => {
   try {
-    const { status, search } = req.query;
+    const { status, search, impact, sort } = req.query;
     const filterConditions = [];
 
     // Filter by status if provided
@@ -84,6 +86,11 @@ export const getTickets = async (req, res, next) => {
         return res.status(400).json({ error: 'Invalid status' });
       }
       filterConditions.push({ status });
+    }
+
+    // Filter by impact level if provided
+    if (impact && ['Critical', 'High', 'Moderate', 'Normal'].includes(impact)) {
+      filterConditions.push({ impact_level: impact });
     }
 
     // Search query across customer_name, ticket_id, customer_email, and description
@@ -102,10 +109,14 @@ export const getTickets = async (req, res, next) => {
     }
 
     const query = filterConditions.length > 0 ? { $and: filterConditions } : {};
+    let sortOptions = { created_at: -1 };
+    if (sort === 'impact' || sort === 'highest_impact') {
+      sortOptions = { impact_score: -1, created_at: -1 };
+    }
 
     const tickets = await Ticket.find(query)
-      .sort({ created_at: -1 })
-      .select('ticket_id customer_name customer_email subject description status incident_id created_at updated_at -_id')
+      .sort(sortOptions)
+      .select('ticket_id customer_name customer_email subject description status incident_id impact_score impact_level impact_factors dismissed_duplicates created_at updated_at -_id')
       .lean();
 
     return res.json(tickets);
@@ -127,7 +138,7 @@ export const getTicketById = async (req, res, next) => {
     }
 
     const ticket = await Ticket.findOne({ ticket_id })
-      .select('ticket_id customer_name customer_email subject description status incident_id created_at updated_at -_id')
+      .select('ticket_id customer_name customer_email subject description status incident_id impact_score impact_level impact_factors dismissed_duplicates created_at updated_at -_id')
       .lean();
 
     if (!ticket) {
@@ -201,6 +212,10 @@ export const updateTicket = async (req, res, next) => {
     // Update timestamp
     ticket.updated_at = now;
     await ticket.save();
+
+    if (hasStatus) {
+      await refreshTicketImpact(ticket_id);
+    }
 
     return res.json({
       success: true,
