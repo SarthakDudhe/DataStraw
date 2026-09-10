@@ -308,6 +308,66 @@ export const ticketApi = {
     return response.json();
   },
 
+  async getIncident(incidentId, params = {}) {
+    const query = new URLSearchParams();
+    if (params.page) query.append('page', params.page);
+    if (params.limit) query.append('limit', params.limit);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    const response = await fetch(`${API_BASE_URL}/api/operations/incidents/${encodeURIComponent(incidentId)}${qs}`);
+    if (!response.ok) throw new Error(`Failed to load incident (${response.status})`);
+    return response.json();
+  },
+
+  async linkTicketToIncident(ticketId, incidentId) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/tickets/${encodeURIComponent(ticketId)}/link-incident`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ incident_id: incidentId }),
+    });
+    if (!response.ok) throw new Error(`Failed to link ticket to incident (${response.status})`);
+    return response.json();
+  },
+
+  async createIncidentFromTicket(ticketId, payload = {}) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/tickets/${encodeURIComponent(ticketId)}/create-incident`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error(`Failed to create incident from ticket (${response.status})`);
+    return response.json();
+  },
+
+  async dismissDuplicate(ticketId, duplicateTicketId) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/tickets/${encodeURIComponent(ticketId)}/dismiss-duplicate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ duplicate_ticket_id: duplicateTicketId }),
+    });
+    if (!response.ok) throw new Error(`Failed to dismiss duplicate (${response.status})`);
+    return response.json();
+  },
+
+  async broadcastIncidentNote(incidentId, noteText) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/incidents/${encodeURIComponent(incidentId)}/broadcast-note`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note_text: noteText }),
+    });
+    if (!response.ok) throw new Error(`Failed to broadcast incident note (${response.status})`);
+    return response.json();
+  },
+
+  async mergeIncidents(sourceIncidentId, targetIncidentId) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/incidents/${encodeURIComponent(sourceIncidentId)}/merge`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_incident_id: targetIncidentId }),
+    });
+    if (!response.ok) throw new Error(`Failed to merge incidents (${response.status})`);
+    return response.json();
+  },
+
   async getKnowledgeArticles(params = '') {
     const search = typeof params === 'string' ? params : params?.search || '';
     const status = typeof params === 'object' && params?.status ? params.status : 'All';
@@ -358,7 +418,13 @@ export const {
   getTicketImpact,
   getKnowledgeSuggestions,
   getIncidents,
+  getIncident,
   updateIncident,
+  linkTicketToIncident,
+  createIncidentFromTicket,
+  dismissDuplicate,
+  broadcastIncidentNote,
+  mergeIncidents,
   getKnowledgeArticles,
   createKnowledgeArticle,
   updateKnowledgeArticle,
