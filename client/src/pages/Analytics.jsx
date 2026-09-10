@@ -145,7 +145,7 @@ const Analytics = () => {
         type="button"
         onClick={loadData}
         disabled={loading}
-        className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+        className="ops-icon-button"
         title="Refresh Metrics"
       >
         <RotateCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-400' : ''}`} />
@@ -156,7 +156,7 @@ const Analytics = () => {
         onClick={handleExportCsv}
         disabled={loading || tickets.length === 0}
       >
-        <Download className="w-4 h-4 mr-1.5 text-zinc-400" />
+        <Download className="w-4 h-4 mr-1.5 text-slate-500" />
         <span>Export CSV Report</span>
       </Button>
     </div>
@@ -173,75 +173,75 @@ const Analytics = () => {
       {/* Primary KPI Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Total Volume */}
-        <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+        <div className="ops-panel p-4">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>Ticket Volume</span>
-            <Layers className="w-4 h-4 text-zinc-400" />
+            <Layers className="w-4 h-4 text-slate-400" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-zinc-100 tracking-tight">
+          <div className="mt-2 text-2xl font-bold text-slate-900 tracking-tight">
             {loading ? '—' : analytics.total}
           </div>
-          <p className="mt-1 text-[11px] text-zinc-500">All registered support cases</p>
+          <p className="mt-1 text-[11px] text-slate-500">All registered support cases</p>
         </div>
 
         {/* SLA Compliance Rate */}
-        <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+        <div className="ops-panel p-4">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>SLA Compliance</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-emerald-400 tracking-tight flex items-baseline gap-1">
             <span>{loading ? '—' : `${analytics.slaComplianceRate}%`}</span>
           </div>
-          <p className="mt-1 text-[11px] text-zinc-500">
+          <p className="mt-1 text-[11px] text-slate-500">
             {analytics.slaBreached > 0 ? `${analytics.slaBreached} tickets breached target SLA` : 'All tickets within SLA target'}
           </p>
         </div>
 
         {/* Resolution Rate */}
-        <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+        <div className="ops-panel p-4">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>Resolution Rate</span>
             <CheckCircle2 className="w-4 h-4 text-blue-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-blue-400 tracking-tight">
             {loading ? '—' : `${analytics.resolutionRate}%`}
           </div>
-          <p className="mt-1 text-[11px] text-zinc-500">
+          <p className="mt-1 text-[11px] text-slate-500">
             {analytics.closed} of {analytics.total} cases closed
           </p>
         </div>
 
         {/* Mean Time to Resolution (MTTR) */}
-        <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-4 shadow-subtle">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
+        <div className="ops-panel p-4">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
             <span>Mean Time to Resolve</span>
             <Clock className="w-4 h-4 text-amber-400" />
           </div>
           <div className="mt-2 text-2xl font-bold text-amber-400 tracking-tight">
             {loading ? '—' : `${analytics.mttrHours}h`}
           </div>
-          <p className="mt-1 text-[11px] text-zinc-500">Average resolution turnaround</p>
+          <p className="mt-1 text-[11px] text-slate-500">Average resolution turnaround</p>
         </div>
       </div>
 
       {/* Two Column Section: Pipeline Distribution & SLA Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Ticket Pipeline Distribution */}
-        <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <section className="ops-panel p-5 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-zinc-400" />
-              <h2 className="text-sm font-semibold text-zinc-100">
+              <BarChart3 className="w-4 h-4 text-slate-500" />
+              <h2 className="text-sm font-semibold text-slate-900">
                 Pipeline Status Distribution
               </h2>
             </div>
-            <span className="text-xs text-zinc-500">Live Breakdown</span>
+            <span className="text-xs text-slate-500">Live breakdown</span>
           </div>
 
           {/* Visual Stacked Progress Bar */}
           <div className="space-y-2">
-            <div className="h-3 w-full bg-zinc-900 rounded-full overflow-hidden flex">
+            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex">
               {analytics.total > 0 && (
                 <>
                   <div
@@ -282,15 +282,15 @@ const Analytics = () => {
         </section>
 
         {/* SLA Health Status Breakdown */}
-        <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <section className="ops-panel p-5 space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-zinc-400" />
-              <h2 className="text-sm font-semibold text-zinc-100">
+              <AlertTriangle className="w-4 h-4 text-slate-500" />
+              <h2 className="text-sm font-semibold text-slate-900">
                 SLA Urgency Monitor
               </h2>
             </div>
-            <span className="text-xs text-zinc-500">Target 12h SLA</span>
+            <span className="text-xs text-slate-500">Target 12h SLA</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
@@ -310,10 +310,10 @@ const Analytics = () => {
               <p className="text-[11px] text-zinc-500 mt-1">Expiring soon</p>
             </div>
 
-            <div className="p-3 bg-zinc-950/60 border border-zinc-800/60 rounded-lg">
+            <div className="p-3 bg-slate-50 border border-slate-100 rounded-md">
               <div className="flex items-center justify-between">
-                <span className="text-zinc-300 font-medium">Healthy Active</span>
-                <span className="font-mono text-base font-bold text-zinc-200">{analytics.slaHealthy}</span>
+                <span className="text-slate-700 font-medium">Healthy Active</span>
+                <span className="font-mono text-base font-bold text-slate-800">{analytics.slaHealthy}</span>
               </div>
               <p className="text-[11px] text-zinc-500 mt-1">On schedule</p>
             </div>
@@ -330,19 +330,19 @@ const Analytics = () => {
       </div>
 
       {/* Top Requesters Section */}
-      <section className="bg-[#111113] border border-zinc-800/80 rounded-xl p-5 shadow-subtle space-y-4">
-        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+      <section className="ops-panel p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-zinc-400" />
-            <h2 className="text-sm font-semibold text-zinc-100">
+            <Users className="w-4 h-4 text-slate-500" />
+            <h2 className="text-sm font-semibold text-slate-900">
               Top Customer Requesters
             </h2>
           </div>
-          <span className="text-xs text-zinc-500">Most active accounts</span>
+          <span className="text-xs text-slate-500">Most active accounts</span>
         </div>
 
         {analytics.topRequesters.length === 0 ? (
-          <div className="text-center py-6 text-zinc-500 text-xs">
+          <div className="text-center py-6 text-slate-500 text-xs">
             No customer requester data available yet.
           </div>
         ) : (
@@ -350,12 +350,12 @@ const Analytics = () => {
             {analytics.topRequesters.map((req, idx) => (
               <div key={idx} className="py-3 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-medium text-zinc-300 shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-xs font-semibold text-amber-800 shrink-0">
                     {req.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-zinc-200 truncate">{req.name}</p>
-                    <p className="text-[11px] text-zinc-500 truncate">{req.email}</p>
+                    <p className="text-xs font-semibold text-slate-800 truncate">{req.name}</p>
+                    <p className="text-[11px] text-slate-500 truncate">{req.email}</p>
                   </div>
                 </div>
 
