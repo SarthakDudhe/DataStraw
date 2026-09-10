@@ -77,7 +77,7 @@ const CreateTicket = () => {
   const backAction = (
     <Link
       to="/"
-      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
+      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
     >
       <ArrowLeft className="w-4 h-4" />
       <span>Back to Tickets</span>
@@ -87,18 +87,18 @@ const CreateTicket = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <PageHeader
-        title="Create Ticket"
-        description="Create a new customer support request."
+        title="Start a conversation"
+        description="Capture clear context so the right person can take the next step quickly."
         action={backAction}
       />
 
-      <div className="bg-[#111113] border border-zinc-800/80 rounded-xl p-6 sm:p-8 shadow-subtle">
+      <div className="ops-panel p-6 sm:p-8">
         {submitError && (
           <div
             role="alert"
-            className="mb-6 p-4 rounded-lg bg-red-950/20 border border-red-900/40 text-xs sm:text-sm text-red-300 flex items-start gap-2.5"
+            className="mb-6 p-4 rounded-md bg-rose-50 border border-rose-200 text-xs sm:text-sm text-rose-700 flex items-start gap-2.5"
           >
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div>{submitError}</div>
           </div>
         )}
