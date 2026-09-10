@@ -18,8 +18,11 @@ const similarity = (left, right) => {
 
 export const findPotentialDuplicates = async (ticket, limit = 5) => {
   const ticketTerms = getTerms(ticket);
+  const dismissed = Array.isArray(ticket.dismissed_duplicates) ? ticket.dismissed_duplicates : [];
+  const excludedIds = [ticket.ticket_id, ...dismissed];
+
   const candidates = await Ticket.find({
-    ticket_id: { $ne: ticket.ticket_id },
+    ticket_id: { $nin: excludedIds },
     status: { $ne: 'Closed' },
   })
     .sort({ created_at: -1 })

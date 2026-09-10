@@ -58,6 +58,25 @@ const ticketSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    dismissed_duplicates: {
+      type: [String],
+      default: [],
+    },
+    impact_score: {
+      type: Number,
+      default: 0,
+      index: -1,
+    },
+    impact_level: {
+      type: String,
+      enum: ['Normal', 'Moderate', 'High', 'Critical'],
+      default: 'Normal',
+      index: true,
+    },
+    impact_factors: {
+      type: [String],
+      default: [],
+    },
     created_at: {
       type: Date,
       default: Date.now,

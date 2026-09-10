@@ -1,3 +1,6 @@
+import { Ticket } from '../models/Ticket.js';
+import { Incident } from '../models/Incident.js';
+
 const CRITICAL_TERMS = ['outage', 'down', 'security', 'breach', 'fraud', 'data loss', 'production'];
 const HIGH_TERMS = ['payment', 'billing', 'login', 'blocked', 'failed', 'error', 'crash'];
 
@@ -38,4 +41,29 @@ export const calculateImpactScore = ({ ticket, priorTicketCount = 0, incidentTic
     level: score >= 70 ? 'Critical' : score >= 40 ? 'High' : score >= 20 ? 'Moderate' : 'Normal',
     factors,
   };
+};
+
+export const refreshTicketImpact = async (ticketId) => {
+  if (!ticketId) return null;
+  const ticket = await Ticket.findOne({ ticket_id: ticketId });
+  if (!ticket) return null;
+
+  const [priorTicketCount, incident] = await Promise.all([
+    Ticket.countDocuments({ customer_email: ticket.customer_email, ticket_id: { $ne: ticket.ticket_id } }),
+    ticket.incident_id ? Incident.findOne({ incident_id: ticket.incident_id }).lean() : null,
+  ]);
+
+  const impact = calculateImpactScore({
+    ticket,
+    priorTicketCount,
+    incidentTicketCount: incident?.ticket_ids?.length || 0,
+  });
+
+  ticket.impact_score = impact.score;
+  ticket.impact_level = impact.level;
+  ticket.impact_factors = impact.factors;
+  ticket.updated_at = new Date();
+  await ticket.save();
+
+  return impact;
 };
