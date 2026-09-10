@@ -308,8 +308,12 @@ export const ticketApi = {
     return response.json();
   },
 
-  async getKnowledgeArticles(search = '') {
-    const query = new URLSearchParams({ search });
+  async getKnowledgeArticles(params = '') {
+    const search = typeof params === 'string' ? params : params?.search || '';
+    const status = typeof params === 'object' && params?.status ? params.status : 'All';
+    const query = new URLSearchParams();
+    if (search) query.append('search', search);
+    if (status) query.append('status', status);
     const response = await fetch(`${API_BASE_URL}/api/knowledge?${query.toString()}`);
     if (!response.ok) throw new Error(`Failed to load knowledge articles (${response.status})`);
     return response.json();
@@ -322,6 +326,24 @@ export const ticketApi = {
       body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error(`Failed to create knowledge article (${response.status})`);
+    return response.json();
+  },
+
+  async updateKnowledgeArticle(slug, payload) {
+    const response = await fetch(`${API_BASE_URL}/api/knowledge/${encodeURIComponent(slug)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error(`Failed to update knowledge article (${response.status})`);
+    return response.json();
+  },
+
+  async incrementArticleHelpful(slug) {
+    const response = await fetch(`${API_BASE_URL}/api/knowledge/${encodeURIComponent(slug)}/helpful`, {
+      method: 'POST',
+    });
+    if (!response.ok) throw new Error(`Failed to record helpful vote (${response.status})`);
     return response.json();
   },
 };
@@ -338,5 +360,7 @@ export const {
   getIncidents,
   updateIncident,
   getKnowledgeArticles,
-  createKnowledgeArticle
+  createKnowledgeArticle,
+  updateKnowledgeArticle,
+  incrementArticleHelpful
 } = ticketApi;

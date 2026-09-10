@@ -57,3 +57,17 @@ export const updateKnowledgeArticle = async (req, res, next) => {
     next(error);
   }
 };
+
+export const incrementArticleHelpful = async (req, res, next) => {
+  try {
+    const article = await KnowledgeArticle.findOneAndUpdate(
+      { slug: req.params.slug },
+      { $inc: { helpful_count: 1 }, $set: { updated_at: new Date() } },
+      { new: true }
+    ).lean();
+    if (!article) return res.status(404).json({ error: 'Knowledge article not found' });
+    return res.json({ success: true, helpful_count: article.helpful_count });
+  } catch (error) {
+    next(error);
+  }
+};

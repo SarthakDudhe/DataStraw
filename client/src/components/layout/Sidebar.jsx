@@ -5,6 +5,7 @@ import {
   PlusCircle, 
   BarChart3,
   Siren,
+  BookOpen,
   Layers,
   Sparkles,
   LifeBuoy
@@ -77,6 +78,14 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
             >
               <Siren className="w-4 h-4" />
               <span>Incidents</span>
+            </NavLink>
+            <NavLink
+              to="/knowledge"
+              onClick={onCloseMobile}
+              className={navItemClass}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Knowledge</span>
             </NavLink>
           </nav>
         </div>
