@@ -42,21 +42,21 @@ const LiveTriageCard = ({ subject, description }) => {
   if (!hasContent || !triage) return null;
 
   return (
-    <div className="p-4 bg-gradient-to-br from-blue-950/20 via-zinc-900/60 to-zinc-950 border border-blue-500/20 rounded-xl shadow-subtle space-y-3 animate-in fade-in duration-200">
+    <div className="p-4 bg-cyan-50/70 border border-cyan-200 rounded-lg shadow-sm space-y-3 animate-in fade-in duration-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-blue-400" />
-          <span className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">
-            Intelligent Triage & SLA Prediction
+          <Sparkles className="w-4 h-4 text-cyan-700" />
+          <span className="text-xs font-semibold text-slate-800 uppercase tracking-wider">
+            Triage suggestion
           </span>
         </div>
-        <span className="text-[10px] font-mono text-zinc-500">Live Analyzer</span>
+        <span className="text-[10px] font-mono text-cyan-700">Live analysis</span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
         {/* Estimated Priority */}
-        <div className="p-2.5 bg-zinc-950/60 border border-zinc-800/60 rounded-lg space-y-1">
-          <span className="text-[10px] text-zinc-500 uppercase tracking-wide block">
+        <div className="p-2.5 bg-white border border-cyan-100 rounded-md space-y-1">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wide block">
             Suggested Priority
           </span>
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${triage.priorityColor}`}>
@@ -65,19 +65,19 @@ const LiveTriageCard = ({ subject, description }) => {
         </div>
 
         {/* Expected SLA Target */}
-        <div className="p-2.5 bg-zinc-950/60 border border-zinc-800/60 rounded-lg space-y-1">
-          <span className="text-[10px] text-zinc-500 uppercase tracking-wide block">
+        <div className="p-2.5 bg-white border border-cyan-100 rounded-md space-y-1">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wide block">
             Expected SLA Target
           </span>
-          <div className="flex items-center gap-1 text-zinc-200 font-medium">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
+          <div className="flex items-center gap-1 text-slate-700 font-semibold">
+            <Clock className="w-3.5 h-3.5 text-cyan-700" />
             <span>&lt; {triage.slaTarget}</span>
           </div>
         </div>
 
         {/* Auto Category Tags */}
-        <div className="col-span-2 sm:col-span-1 p-2.5 bg-zinc-950/60 border border-zinc-800/60 rounded-lg space-y-1">
-          <span className="text-[10px] text-zinc-500 uppercase tracking-wide block">
+        <div className="col-span-2 sm:col-span-1 p-2.5 bg-white border border-cyan-100 rounded-md space-y-1">
+          <span className="text-[10px] text-slate-500 uppercase tracking-wide block">
             Detected Categories
           </span>
           <div className="flex items-center gap-1.5 flex-wrap">
