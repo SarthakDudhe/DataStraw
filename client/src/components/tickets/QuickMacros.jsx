@@ -59,7 +59,7 @@ const QuickMacros = ({ ticket, onApplyMacro, disabled = false }) => {
   return (
     <div className="relative inline-block text-left w-full">
       <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-xs font-medium text-zinc-300">
+        <label className="block text-xs font-semibold text-slate-700">
           Response / Note
         </label>
         
@@ -68,18 +68,18 @@ const QuickMacros = ({ ticket, onApplyMacro, disabled = false }) => {
           type="button"
           disabled={disabled}
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-1.5 px-2 py-1 text-[11px] font-medium text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 rounded-md transition-colors"
+          className="inline-flex items-center gap-1.5 px-2 py-1 text-[11px] font-semibold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-md transition-colors"
         >
-          <Zap className="w-3 h-3 text-amber-400" />
-          <span>⚡ Quick Macros</span>
-          <ChevronDown className="w-3 h-3 text-amber-400/80" />
+          <Zap className="w-3 h-3 text-amber-700" />
+          <span>Response templates</span>
+          <ChevronDown className="w-3 h-3 text-amber-700" />
         </button>
       </div>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-7 z-30 w-72 sm:w-80 bg-[#18181b] border border-zinc-700/80 rounded-xl shadow-2xl p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-100">
-          <div className="px-2.5 py-1 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800">
+        <div className="absolute right-0 top-7 z-30 w-72 sm:w-80 bg-white border border-slate-200 rounded-lg shadow-xl p-1.5 space-y-1 animate-in fade-in zoom-in-95 duration-100">
+          <div className="px-2.5 py-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
             Insert Saved Macro
           </div>
           {MACROS.map((macro) => (
@@ -87,13 +87,13 @@ const QuickMacros = ({ ticket, onApplyMacro, disabled = false }) => {
               key={macro.id}
               type="button"
               onClick={() => handleSelectMacro(macro)}
-              className="w-full text-left p-2 rounded-lg hover:bg-zinc-800/80 transition-colors group flex items-start justify-between gap-2"
+              className="w-full text-left p-2 rounded-md hover:bg-slate-50 transition-colors group flex items-start justify-between gap-2"
             >
               <div>
-                <div className="text-xs font-medium text-zinc-200 group-hover:text-amber-400 transition-colors">
+                <div className="text-xs font-semibold text-slate-700 group-hover:text-amber-800 transition-colors">
                   {macro.title}
                 </div>
-                <div className="text-[11px] text-zinc-400 line-clamp-1">
+                <div className="text-[11px] text-slate-500 line-clamp-1">
                   {macro.description}
                 </div>
               </div>

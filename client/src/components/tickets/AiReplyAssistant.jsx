@@ -42,19 +42,19 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
         <button
           type="button"
           onClick={() => setShowOptions((prev) => !prev)}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-colors focus:outline-none"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 transition-colors focus:outline-none"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Gemini Smart Reply</span>
+          <span>Draft a reply</span>
         </button>
 
         {showOptions && (
-          <div className="flex items-center gap-1 text-[11px] text-zinc-400">
+          <div className="flex items-center gap-1 text-[11px] text-slate-500">
             <span>Tone:</span>
             <select
               value={tone}
               onChange={(e) => setTone(e.target.value)}
-              className="bg-zinc-900 border border-zinc-700/80 rounded px-1.5 py-0.5 text-zinc-200 text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="bg-white border border-slate-200 rounded px-1.5 py-0.5 text-slate-700 text-xs focus:outline-none focus:border-cyan-500 cursor-pointer"
             >
               <option value="professional">Professional</option>
               <option value="empathetic">Empathetic</option>
@@ -65,13 +65,13 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
       </div>
 
       {showOptions && (
-        <div className="p-3 bg-zinc-950/70 border border-zinc-800/80 rounded-lg space-y-2.5 animate-fadeIn text-xs">
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-md space-y-2.5 animate-fadeIn text-xs">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-zinc-400 font-medium">
-              Click intent to generate with Gemini AI:
+            <span className="text-[11px] text-slate-600 font-medium">
+              Choose the intent for your draft:
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
-              Gemini 3.6
+            <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+              Assisted
             </span>
           </div>
 
@@ -80,17 +80,17 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
               type="button"
               disabled={generatingType !== null}
               onClick={() => handleApply('investigating')}
-              className="p-2.5 rounded-md bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-blue-500/40 text-left transition-all group disabled:opacity-50"
+              className="p-2.5 rounded-md bg-white hover:bg-cyan-50 border border-slate-200 hover:border-cyan-200 text-left transition-all group disabled:opacity-50"
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-zinc-200 group-hover:text-blue-400">
+                <span className="font-semibold text-slate-700 group-hover:text-cyan-700">
                   Investigating
                 </span>
                 {generatingType === 'investigating' && (
-                  <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                  <Loader2 className="w-3 h-3 animate-spin text-cyan-700" />
                 )}
               </div>
-              <p className="text-[10px] text-zinc-500 mt-0.5">
+              <p className="text-[10px] text-slate-500 mt-0.5">
                 Confirming active review
               </p>
             </button>
@@ -99,17 +99,17 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
               type="button"
               disabled={generatingType !== null}
               onClick={() => handleApply('resolved')}
-              className="p-2.5 rounded-md bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-left transition-all group disabled:opacity-50"
+              className="p-2.5 rounded-md bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 text-left transition-all group disabled:opacity-50"
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-zinc-200 group-hover:text-emerald-400">
+                <span className="font-semibold text-slate-700 group-hover:text-emerald-700">
                   Fix Deployed
                 </span>
                 {generatingType === 'resolved' && (
                   <Loader2 className="w-3 h-3 animate-spin text-emerald-400" />
                 )}
               </div>
-              <p className="text-[10px] text-zinc-500 mt-0.5">
+              <p className="text-[10px] text-slate-500 mt-0.5">
                 Issue solved; ask user test
               </p>
             </button>
@@ -118,17 +118,17 @@ const AiReplyAssistant = ({ ticket, onInsertReply }) => {
               type="button"
               disabled={generatingType !== null}
               onClick={() => handleApply('need_info')}
-              className="p-2.5 rounded-md bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-amber-500/40 text-left transition-all group disabled:opacity-50"
+              className="p-2.5 rounded-md bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-200 text-left transition-all group disabled:opacity-50"
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-zinc-200 group-hover:text-amber-400">
+                <span className="font-semibold text-slate-700 group-hover:text-amber-700">
                   Need More Info
                 </span>
                 {generatingType === 'need_info' && (
                   <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
                 )}
               </div>
-              <p className="text-[10px] text-zinc-500 mt-0.5">
+              <p className="text-[10px] text-slate-500 mt-0.5">
                 Request error logs & steps
               </p>
             </button>
