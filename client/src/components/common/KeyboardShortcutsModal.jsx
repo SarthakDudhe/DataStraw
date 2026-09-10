@@ -94,41 +94,41 @@ export const KeyboardShortcutsModal = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-[#18181b] border border-zinc-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/30 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="bg-white border border-slate-200 rounded-lg max-w-md w-full p-6 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-300">
+            <div className="w-8 h-8 rounded-md bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-700">
               <Keyboard className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-zinc-100">Keyboard Shortcuts</h3>
-              <p className="text-xs text-zinc-400">Power user workflow actions</p>
+              <h3 className="text-sm font-bold text-slate-900">Keyboard Shortcuts</h3>
+              <p className="text-xs text-slate-500">Power user workflow actions</p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+            className="p-1.5 rounded-md text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="divide-y divide-zinc-800/80 text-xs">
+        <div className="divide-y divide-slate-100 text-xs">
           {SHORTCUTS.map((item, idx) => (
             <div key={idx} className="py-2.5 flex items-center justify-between">
-              <span className="text-zinc-300 font-medium">{item.description}</span>
-              <kbd className="px-2 py-1 bg-zinc-900 border border-zinc-700/80 rounded font-mono text-[11px] text-zinc-300 shadow-sm">
+              <span className="text-slate-700 font-medium">{item.description}</span>
+              <kbd className="px-2 py-1 bg-slate-50 border border-slate-200 rounded font-mono text-[11px] text-slate-600 shadow-sm">
                 {item.key}
               </kbd>
             </div>
           ))}
         </div>
 
-        <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-500">
-          <span>Press <kbd className="px-1.5 py-0.5 bg-zinc-900 border border-zinc-700 rounded font-mono text-[10px]">Esc</kbd> to close</span>
-          <span>Support CRM v2.0</span>
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span>Press <kbd className="px-1.5 py-0.5 bg-slate-50 border border-slate-200 rounded font-mono text-[10px]">Esc</kbd> to close</span>
+          <span>Deskline</span>
         </div>
       </div>
     </div>
