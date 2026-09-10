@@ -357,7 +357,7 @@ const TicketDetails = () => {
             currentTicketId={currentTicketId}
           />
 
-          <CaseSignalsCard ticket={ticket} />
+          <CaseSignalsCard ticket={ticket} onTicketUpdated={loadTicket} />
 
           {/* Status & Update Controls with AI Reply Assistant */}
           <section className="ops-panel p-5 space-y-4">
