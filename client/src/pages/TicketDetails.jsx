@@ -26,6 +26,7 @@ import AiReplyAssistant from '../components/tickets/AiReplyAssistant';
 import CustomerHistoryCard from '../components/tickets/CustomerHistoryCard';
 import SlaBadge from '../components/tickets/SlaBadge';
 import QuickMacros from '../components/tickets/QuickMacros';
+import CaseSignalsCard from '../components/tickets/CaseSignalsCard';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -355,6 +356,8 @@ const TicketDetails = () => {
             customerEmail={customerEmail}
             currentTicketId={currentTicketId}
           />
+
+          <CaseSignalsCard ticket={ticket} />
 
           {/* Status & Update Controls with AI Reply Assistant */}
           <section className="ops-panel p-5 space-y-4">

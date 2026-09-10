@@ -278,6 +278,19 @@ export const ticketApi = {
 
     return await response.json();
   },
+
+  async getTicketImpact(ticketId) {
+    const response = await fetch(`${API_BASE_URL}/api/operations/tickets/${encodeURIComponent(ticketId)}/impact`);
+    if (!response.ok) throw new Error(`Failed to load ticket impact (${response.status})`);
+    return response.json();
+  },
+
+  async getKnowledgeSuggestions({ subject = '', description = '' }) {
+    const query = new URLSearchParams({ subject, description });
+    const response = await fetch(`${API_BASE_URL}/api/knowledge/suggestions?${query.toString()}`);
+    if (!response.ok) throw new Error(`Failed to load knowledge suggestions (${response.status})`);
+    return response.json();
+  },
 };
 
 export const { 
@@ -286,5 +299,7 @@ export const {
   createTicket, 
   updateTicket, 
   aiSummarizeTicket, 
-  aiGenerateReply 
+  aiGenerateReply,
+  getTicketImpact,
+  getKnowledgeSuggestions
 } = ticketApi;
