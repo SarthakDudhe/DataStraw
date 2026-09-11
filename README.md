@@ -135,18 +135,18 @@ sequenceDiagram
     participant API as Express REST API
     participant DB as MongoDB / Persistent DB
 
-    Customer->>Portal: Types Subject: "Regional TLS 1.3 Latency"
+    Customer->>Portal: Types Subject - Regional TLS 1.3 Latency
     Portal->>Deflect: Debounce 250ms & Match Keywords
     Deflect-->>Customer: Displays Suggested Instant Resolution
     alt Issue Self-Resolved
-        Customer->>Deflect: Clicks "This Solved My Issue!"
-        Note over Customer, Deflect: Ticket deflected! 0 staff time consumed.
+        Customer->>Deflect: Clicks Solved Button
+        Note over Customer, Deflect: Ticket deflected - zero staff time consumed
     else Needs Staff Investigation
-        Customer->>Portal: Fills Description & Clicks Submit
+        Customer->>Portal: Fills Description and Clicks Submit
         Portal->>API: POST /api/tickets
-        API->>DB: Atomic Counter -> Generate TKT-003
+        API->>DB: Atomic Counter to Generate TKT-003
         DB-->>API: Persisted
-        API-->>Portal: 201 Created { ticket_id: "TKT-003" }
+        API-->>Portal: 201 Created (ticket_id: TKT-003)
         Portal-->>Customer: Shows 3-Stage Progress Tracker
     end
 ```
@@ -173,17 +173,17 @@ sequenceDiagram
     participant KB as Knowledge Engine
     participant API as Express REST API
 
-    Agent->>CRM: Searches "TLS" & Filters Status="Open"
-    CRM-->>Agent: Returns TKT-003 in <50ms
+    Agent->>CRM: Searches TLS and Filters Status Open
+    CRM-->>Agent: Returns TKT-003 in under 50ms
     Agent->>Detail: Opens Ticket Workspace
     Detail->>KB: GET /api/knowledge/suggestions?query=TLS
-    KB-->>Detail: Returns "Cloudflare Edge SSL Troubleshooting"
-    Agent->>Detail: Clicks "Use Solution" Macro
-    Note over Detail: Verified fix inserted into Note Composer!
-    Agent->>Detail: Clicks "Resolve & Close"
-    Detail->>API: PUT /api/tickets/TKT-003 { status: "Closed", notes: "Applied SSL fix" }
-    API-->>Detail: 200 OK { success: true }
-    Detail-->>Agent: Badge turns Emerald Green; Toast Confirms
+    KB-->>Detail: Returns Cloudflare Edge SSL Solution
+    Agent->>Detail: Clicks Use Solution Macro
+    Note over Detail: Verified fix inserted into Note Composer
+    Agent->>Detail: Clicks Resolve and Close
+    Detail->>API: PUT /api/tickets/TKT-003 (status: Closed)
+    API-->>Detail: 200 OK (success: true)
+    Detail-->>Agent: Badge turns Emerald Green and Toast Confirms
 ```
 
 ---
@@ -198,7 +198,7 @@ graph TB
         Router["React Router v6 Route Guards"]
         AuthCtx["AuthContext (RBAC + LocalStorage)"]
         Views["Cockpit Views: Home, Intake, TicketDetails, Portal"]
-        Deskline["Deskline Design Tokens (#142a43, #f4f7fb)"]
+        Deskline["Deskline Design Tokens (Navy, Slate)"]
         APIClient["ticketApi.js Service Abstraction"]
     end
 
@@ -259,8 +259,8 @@ erDiagram
         string customer_email "Indexed Contact Email"
         string subject "Issue Summary Headline"
         text description "Full Narrative Description"
-        string status "Enum: Open | In Progress | Closed"
-        string impact_level "Enum: Normal | Moderate | High | Critical"
+        string status "Enum: Open, In Progress, Closed"
+        string impact_level "Enum: Normal, Moderate, High, Critical"
         timestamp created_at "UTC Creation Timestamp"
         timestamp updated_at "UTC Modification Timestamp"
     }
