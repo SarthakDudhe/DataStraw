@@ -1,5 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { 
+  Layers, 
+  ShieldCheck, 
+  User, 
+  Mail, 
+  Lock, 
+  Eye, 
+  EyeOff, 
+  ArrowRight, 
+  CheckCircle2, 
+  Sparkles,
+  LifeBuoy
+} from 'lucide-react';
 import { useAuth, DEMO_CREDENTIALS } from '../context/AuthContext';
 
 const Login = () => {
@@ -15,7 +28,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // If already authenticated, redirect to appropriate portal
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
       if (role === 'customer') {
         navigate('/portal', { replace: true });
@@ -57,7 +70,7 @@ const Login = () => {
       } else {
         setError(result.error);
       }
-    }, 350);
+    }, 300);
   };
 
   const handleQuickDemo = (demoRole) => {
@@ -75,206 +88,229 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Subtle Background Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20 mb-3 border border-blue-400/30">
-            <svg
-              className="w-6 h-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between antialiased selection:bg-cyan-100 selection:text-slate-900 font-sans">
+      {/* Top Brand Bar */}
+      <header className="h-16 px-6 lg:px-12 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#142a43] flex items-center justify-center text-white shadow-sm">
+            <Layers className="w-4 h-4" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
-            Datastraw Support CRM
-          </h1>
-          <p className="mt-1 text-sm text-slate-400">
-            Enterprise ticketing, customer helpdesk & triage platform
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg relative z-10 px-4">
-        <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-700/60 rounded-2xl shadow-2xl p-6 sm:p-8">
-          {/* Role Mode Tabs */}
-          <div className="flex rounded-xl bg-slate-800/80 p-1 mb-6 border border-slate-700/50">
-            <button
-              type="button"
-              onClick={() => handleTabChange('admin')}
-              className={`flex-1 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 ${
-                activeTab === 'admin'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-700/40'
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              <span>Support Admin / Staff</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange('customer')}
-              className={`flex-1 py-2.5 px-3 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center gap-2 ${
-                activeTab === 'customer'
-                  ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-700/40'
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span>Customer Portal</span>
-            </button>
-          </div>
-
-          {/* Role Context Hint */}
-          <div className="mb-6 p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-xs text-slate-300 flex items-start gap-3">
-            <span className="p-1 rounded-md bg-blue-500/20 text-blue-400 mt-0.5 shrink-0 font-mono">
-              {activeTab === 'admin' ? 'AGENT' : 'CLIENT'}
-            </span>
-            <div>
-              {activeTab === 'admin' ? (
-                <p>
-                  Access the internal monitoring console: live queue, triage, status updates, SLA countdowns, and internal support notes.
-                </p>
-              ) : (
-                <p>
-                  Access the customer help center: submit new support inquiries, track personal ticket status, and browse self-help articles.
-                </p>
-              )}
+          <div>
+            <div className="text-sm font-semibold text-slate-900 tracking-tight leading-none">
+              Deskline
+            </div>
+            <div className="text-[11px] text-slate-500 font-medium mt-1 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+              Customer operations platform
             </div>
           </div>
+        </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Live system status pill */}
+        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+          <span className="hidden sm:inline-block">System Status:</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-mono font-medium">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+            Operational • 99.98% SLA
+          </span>
+        </div>
+      </header>
+
+      {/* Main Form Center */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-md">
+          {/* Form Panel Card */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.06)] p-6 sm:p-8">
+            {/* Title & Introduction */}
+            <div className="mb-6">
+              <span className="ops-label text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-100 inline-block mb-2">
+                Authentication Portal
+              </span>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+                Sign in to your account
+              </h1>
+              <p className="text-xs text-slate-500 mt-1">
+                Choose your operational role to access your dedicated workspace.
+              </p>
+            </div>
+
+            {/* Role Switcher Segmented Control */}
+            <div className="flex rounded-lg bg-slate-100 p-1 mb-6 border border-slate-200">
+              <button
+                type="button"
+                onClick={() => handleTabChange('admin')}
+                className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5 ${
+                  activeTab === 'admin'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ShieldCheck className={`w-3.5 h-3.5 ${activeTab === 'admin' ? 'text-cyan-700' : 'text-slate-400'}`} />
+                <span>Support Admin</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange('customer')}
+                className={`flex-1 py-2 px-3 rounded-md text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-1.5 ${
+                  activeTab === 'customer'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <User className={`w-3.5 h-3.5 ${activeTab === 'customer' ? 'text-cyan-700' : 'text-slate-400'}`} />
+                <span>Customer Helpdesk</span>
+              </button>
+            </div>
+
+            {/* Error banner */}
             {error && (
-              <div className="p-3 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
-                <svg className="w-4 h-4 shrink-0 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
+              <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Email Address
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="w-full px-3.5 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@company.com"
+                    className="w-full pl-9 pr-3.5 py-2 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-[#142a43] transition-colors"
+                  />
+                </div>
+              </div>
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-10"
-                />
+              {/* Password */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-9 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-[#142a43] transition-colors font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-2.5 px-4 rounded-lg text-xs sm:text-sm font-semibold text-white bg-[#142a43] hover:bg-[#203a58] shadow-xs transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Enter {activeTab === 'admin' ? 'Support Workspace' : 'Customer Helpdesk'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Quick Demo Access (Evaluator Section) */}
+            <div className="mt-6 pt-5 border-t border-slate-100">
+              <div className="flex items-center justify-between mb-3">
+                <span className="ops-label text-slate-500">
+                  Instant Evaluator Demo
+                </span>
+                <span className="text-[10px] text-cyan-800 bg-cyan-50 px-1.5 py-0.5 rounded font-mono border border-cyan-100 flex items-center gap-1">
+                  <Sparkles className="w-2.5 h-2.5 text-cyan-600" />
+                  1-Click Access
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {/* Demo Admin Card */}
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-200 text-xs"
+                  onClick={() => handleQuickDemo('admin')}
+                  className="p-2.5 text-left rounded-lg border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 hover:shadow-xs transition-all group focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-[#142a43] text-white flex items-center justify-center text-[10px] font-bold">
+                      AR
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-[#142a43] truncate">
+                        Alex Rivera
+                      </div>
+                      <div className="text-[10px] text-slate-500 truncate">
+                        Support Admin
+                      </div>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Demo Customer Card */}
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemo('customer')}
+                  className="p-2.5 text-left rounded-lg border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 hover:shadow-xs transition-all group focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-cyan-800 text-white flex items-center justify-center text-[10px] font-bold">
+                      RS
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-cyan-900 truncate">
+                        Rahul Sharma
+                      </div>
+                      <div className="text-[10px] text-slate-500 truncate">
+                        Client / Customer
+                      </div>
+                    </div>
+                  </div>
                 </button>
               </div>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'admin'
-                  ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/25'
-                  : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/25'
-              } disabled:opacity-60 disabled:cursor-not-allowed mt-2`}
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Signing In...</span>
-                </>
-              ) : (
-                <span>Sign In to {activeTab === 'admin' ? 'Support CRM' : 'Customer Portal'} &rarr;</span>
-              )}
-            </button>
-          </form>
-
-          {/* Quick Demo Section (Highlighted for Evaluators) */}
-          <div className="mt-6 pt-6 border-t border-slate-800">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
-                1-Click Evaluator Demo Access
-              </span>
-              <span className="text-[11px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                Auto-Login
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('admin')}
-                className="p-3 bg-slate-800/70 hover:bg-slate-800 border border-slate-700/80 hover:border-blue-500/60 rounded-xl text-left transition-all group"
-              >
-                <div className="flex items-center gap-2 text-xs font-semibold text-white group-hover:text-blue-400">
-                  <span className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span>Demo Admin</span>
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 font-mono">
-                  admin@datastraw.io
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('customer')}
-                className="p-3 bg-slate-800/70 hover:bg-slate-800 border border-slate-700/80 hover:border-indigo-500/60 rounded-xl text-left transition-all group"
-              >
-                <div className="flex items-center gap-2 text-xs font-semibold text-white group-hover:text-indigo-400">
-                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                  <span>Demo Customer</span>
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 font-mono">
-                  customer@example.com
-                </div>
-              </button>
-            </div>
+          {/* Context note */}
+          <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-500">
+            <LifeBuoy className="w-3.5 h-3.5 text-slate-400" />
+            <span>Datastraw Support CRM • Architectural Role Separation</span>
           </div>
         </div>
+      </main>
 
-        {/* Footer info */}
-        <p className="mt-6 text-center text-xs text-slate-500">
-          Datastraw Technologies Assessment • Role-Separated Support System
-        </p>
-      </div>
+      {/* Subtle Footer */}
+      <footer className="py-3 px-6 text-center text-[11px] text-slate-400 border-t border-slate-200/80 bg-white/40">
+        Internal Deskline Operations Engine &bull; Enterprise Support Assessment
+      </footer>
     </div>
   );
 };
