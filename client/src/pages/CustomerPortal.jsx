@@ -8,10 +8,13 @@ import {
   ArrowRight, 
   RotateCw,
   Clock,
-  Sparkles
+  Sparkles,
+  Check
 } from 'lucide-react';
 import CustomerNavbar from '../components/layout/CustomerNavbar';
 import StatusBadge from '../components/tickets/StatusBadge';
+import TicketDeflection from '../components/portal/TicketDeflection';
+import ActiveIncidentBanner from '../components/portal/ActiveIncidentBanner';
 import { useAuth } from '../context/AuthContext';
 import { ticketApi } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
@@ -48,6 +51,7 @@ const CustomerPortal = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState(null);
+  const [deflectedSolution, setDeflectedSolution] = useState(null);
 
   // Tickets state
   const [myTickets, setMyTickets] = useState([]);
@@ -88,6 +92,12 @@ const CustomerPortal = () => {
     }
   };
 
+  const handleDeflection = (solutionTitle) => {
+    setDeflectedSolution(solutionTitle);
+    setFormData({ subject: '', description: '' });
+    showToast('Inquiry resolved instantly! Ticket deflected.', 'success');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -125,6 +135,9 @@ const CustomerPortal = () => {
       <CustomerNavbar activeTab={activeTab} onTabChange={setActiveTab} />
 
       <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        {/* Active Incident Warning Banner */}
+        <ActiveIncidentBanner />
+
         {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200">
@@ -146,6 +159,7 @@ const CustomerPortal = () => {
                 type="button"
                 onClick={() => {
                   setSubmittedTicket(null);
+                  setDeflectedSolution(null);
                   setActiveTab('submit');
                 }}
                 className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all shadow-xs ${
@@ -176,8 +190,41 @@ const CustomerPortal = () => {
         {/* TAB 1: SUBMIT A TICKET */}
         {activeTab === 'submit' && (
           <div className="max-w-2xl mx-auto">
-            {submittedTicket ? (
-              <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm text-center">
+            {/* DEFLECTED CELEBRATION CARD */}
+            {deflectedSolution ? (
+              <div className="bg-white border border-emerald-200 rounded-xl p-8 shadow-sm text-center animate-fadeIn">
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
+                  <Check className="w-6 h-6" />
+                </div>
+                <span className="text-xs font-mono font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
+                  Ticket Deflected & Self-Resolved
+                </span>
+                <h2 className="text-xl font-bold text-slate-900 mt-3">
+                  Glad we could solve your issue instantly!
+                </h2>
+                <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+                  You self-resolved via <span className="font-semibold text-slate-800">"{deflectedSolution}"</span>. No support ticket was logged, saving you queue wait time.
+                </p>
+
+                <div className="mt-6 flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeflectedSolution(null)}
+                    className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#142a43] text-white hover:bg-[#203a58] transition-colors shadow-sm"
+                  >
+                    Ask Another Question
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('faq')}
+                    className="px-4 py-2 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    Browse Knowledge Base
+                  </button>
+                </div>
+              </div>
+            ) : submittedTicket ? (
+              <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm text-center animate-fadeIn">
                 <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
@@ -263,7 +310,7 @@ const CustomerPortal = () => {
                       Detailed Description <span className="text-rose-500">*</span>
                     </label>
                     <textarea
-                      rows={5}
+                      rows={4}
                       name="description"
                       value={formData.description}
                       onChange={handleFormChange}
@@ -276,6 +323,12 @@ const CustomerPortal = () => {
                       <p className="mt-1 text-xs text-rose-600">{errors.description}</p>
                     )}
                   </div>
+
+                  {/* Real-time ticket deflection engine (As user types) */}
+                  <TicketDeflection
+                    query={`${formData.subject} ${formData.description}`}
+                    onDeflected={handleDeflection}
+                  />
 
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
                     <button
