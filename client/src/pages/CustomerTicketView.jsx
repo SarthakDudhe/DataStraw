@@ -7,57 +7,130 @@ import {
   AlertCircle, 
   MessageSquare, 
   ShieldCheck,
-  LifeBuoy
+  LifeBuoy,
+  Send,
+  Star,
+  Check,
+  User
 } from 'lucide-react';
 import CustomerNavbar from '../components/layout/CustomerNavbar';
 import StatusBadge from '../components/tickets/StatusBadge';
 import { useAuth } from '../context/AuthContext';
 import { ticketApi } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
+import { useToast } from '../components/common/Toast';
 
 const CustomerTicketView = () => {
   const { ticketId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Two-way reply state
+  const [customerReply, setCustomerReply] = useState('');
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+
+  // CSAT rating state
+  const [csatRating, setCsatRating] = useState(() => {
+    try {
+      return localStorage.getItem(`csat_${ticketId}`) || null;
+    } catch {
+      return null;
+    }
+  });
+  const [isClosingTicket, setIsClosingTicket] = useState(false);
+
+  const fetchTicket = async (isMounted = true) => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await ticketApi.getTicket(ticketId);
+      if (!isMounted) return;
+
+      if (
+        user?.email &&
+        data.customer_email &&
+        data.customer_email.toLowerCase() !== user.email.toLowerCase()
+      ) {
+        setError('Access restricted: You do not have permission to view tickets belonging to another account.');
+        setTicket(null);
+        return;
+      }
+
+      setTicket(data);
+    } catch (err) {
+      if (!isMounted) return;
+      setError(err.message || 'Unable to retrieve ticket details.');
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
-    const fetchTicket = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const data = await ticketApi.getTicket(ticketId);
-        if (!isMounted) return;
-
-        // Security check: verify this ticket belongs to the logged in customer
-        if (
-          user?.email &&
-          data.customer_email &&
-          data.customer_email.toLowerCase() !== user.email.toLowerCase()
-        ) {
-          setError('Access restricted: You do not have permission to view tickets belonging to another account.');
-          setTicket(null);
-          return;
-        }
-
-        setTicket(data);
-      } catch (err) {
-        if (!isMounted) return;
-        setError(err.message || 'Unable to retrieve ticket details.');
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchTicket();
+    fetchTicket(isMounted);
     return () => {
       isMounted = false;
     };
   }, [ticketId, user?.email]);
+
+  const handleSendReply = async (e) => {
+    e.preventDefault();
+    if (!customerReply.trim()) return;
+
+    setIsSubmittingReply(true);
+    try {
+      const formattedNote = `Customer (${user?.name || 'Customer'}): ${customerReply.trim()}`;
+      await ticketApi.updateTicket(ticket.ticket_id, {
+        status: ticket.status,
+        notes: formattedNote,
+      });
+
+      showToast('Reply posted to ticket thread.', 'success');
+      setCustomerReply('');
+      // Refresh ticket to show new note in timeline
+      await fetchTicket(true);
+    } catch (err) {
+      showToast(err.message || 'Failed to post reply. Please try again.', 'error');
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  };
+
+  const handleMarkAsResolved = async () => {
+    if (!window.confirm('Are you sure your issue is resolved? This will close your ticket.')) {
+      return;
+    }
+
+    setIsClosingTicket(true);
+    try {
+      await ticketApi.updateTicket(ticket.ticket_id, {
+        status: 'Closed',
+        notes: `Customer (${user?.name || 'Customer'}) marked this ticket as resolved.`,
+      });
+
+      showToast('Ticket marked as resolved!', 'success');
+      await fetchTicket(true);
+    } catch (err) {
+      showToast(err.message || 'Failed to update ticket status.', 'error');
+    } finally {
+      setIsClosingTicket(false);
+    }
+  };
+
+  const handleRateCsat = (rating) => {
+    setCsatRating(rating);
+    try {
+      localStorage.setItem(`csat_${ticketId}`, rating);
+    } catch {
+      // ignore
+    }
+    showToast(`Thank you! Support rating saved (${rating}/5 stars).`, 'success');
+  };
 
   const getStepState = (targetStatus) => {
     const status = ticket?.status || 'Open';
@@ -67,7 +140,6 @@ const CustomerTicketView = () => {
       if (targetStatus === 'In Progress') return 'current';
       return 'upcoming';
     }
-    // Open
     if (targetStatus === 'Open') return 'current';
     return 'upcoming';
   };
@@ -77,8 +149,8 @@ const CustomerTicketView = () => {
       <CustomerNavbar activeTab="tickets" onTabChange={() => navigate('/portal')} />
 
       <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1">
-        {/* Back navigation */}
-        <div className="mb-6">
+        {/* Back navigation & actions */}
+        <div className="flex items-center justify-between mb-6">
           <Link
             to="/portal"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
@@ -86,6 +158,18 @@ const CustomerTicketView = () => {
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to My Tickets</span>
           </Link>
+
+          {ticket && ticket.status !== 'Closed' && (
+            <button
+              type="button"
+              disabled={isClosingTicket}
+              onClick={handleMarkAsResolved}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors disabled:opacity-50"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>{isClosingTicket ? 'Closing...' : 'Mark as Resolved'}</span>
+            </button>
+          )}
         </div>
 
         {loading ? (
@@ -186,7 +270,7 @@ const CustomerTicketView = () => {
               </div>
             </div>
 
-            {/* Description & Details */}
+            {/* Description & Issue Context */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs space-y-4">
               <div>
                 <span className="ops-label text-slate-500 block mb-2">
@@ -197,44 +281,125 @@ const CustomerTicketView = () => {
                 </p>
               </div>
 
-              {/* Notes / Activity Feed for Customer */}
-              {ticket.notes && ticket.notes.length > 0 && (
-                <div className="pt-4 border-t border-slate-100">
-                  <span className="ops-label text-slate-500 block mb-3 flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Support Communications</span>
-                  </span>
-                  <div className="space-y-2.5">
-                    {ticket.notes.map((note, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
-                      >
-                        <div className="flex items-center justify-between text-slate-800 font-semibold mb-1">
-                          <span className="flex items-center gap-1">
-                            <ShieldCheck className="w-3.5 h-3.5 text-cyan-700" />
-                            <span>Support Staff</span>
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-normal">
-                            {formatDate(note.created_at || note.createdAt)}
-                          </span>
+              {/* Two-Way Conversation Timeline */}
+              <div className="pt-4 border-t border-slate-100">
+                <span className="ops-label text-slate-500 block mb-3 flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Conversation & Support Timeline</span>
+                </span>
+
+                <div className="space-y-3 mb-5">
+                  {ticket.notes && ticket.notes.length > 0 ? (
+                    ticket.notes.map((note, idx) => {
+                      const noteText = note.note_text || note.text || '';
+                      const isCustomerNote = noteText.startsWith('Customer');
+
+                      return (
+                        <div
+                          key={idx}
+                          className={`p-3.5 rounded-lg text-xs border ${
+                            isCustomerNote
+                              ? 'bg-cyan-50/70 border-cyan-200 ml-4'
+                              : 'bg-slate-50 border-slate-200 mr-4'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between font-semibold mb-1">
+                            <span className="flex items-center gap-1.5">
+                              {isCustomerNote ? (
+                                <User className="w-3.5 h-3.5 text-cyan-700" />
+                              ) : (
+                                <ShieldCheck className="w-3.5 h-3.5 text-slate-700" />
+                              )}
+                              <span className={isCustomerNote ? 'text-cyan-950' : 'text-slate-800'}>
+                                {isCustomerNote ? 'You (Customer)' : 'Support Staff'}
+                              </span>
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-normal">
+                              {formatDate(note.created_at || note.createdAt)}
+                            </span>
+                          </div>
+                          <p className="text-slate-700 leading-relaxed mt-1">
+                            {noteText.replace(/^Customer \([^)]+\):\s*/, '')}
+                          </p>
                         </div>
-                        <p className="text-slate-700 mt-1 leading-relaxed">{note.note_text || note.text}</p>
-                      </div>
-                    ))}
-                  </div>
+                      );
+                    })
+                  ) : (
+                    <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
+                      No communications recorded yet. Our support agents will post updates here.
+                    </div>
+                  )}
                 </div>
-              )}
+
+                {/* Two-Way Reply Input Form (If ticket is not closed) */}
+                {ticket.status !== 'Closed' ? (
+                  <form onSubmit={handleSendReply} className="pt-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      Post a reply or provide additional details:
+                    </label>
+                    <div className="flex gap-2">
+                      <textarea
+                        rows={2}
+                        value={customerReply}
+                        onChange={(e) => setCustomerReply(e.target.value)}
+                        placeholder="Add extra context, transaction IDs, or follow-up questions..."
+                        className="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-[#142a43] transition-colors resize-y"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isSubmittingReply || !customerReply.trim()}
+                        className="self-end px-3.5 py-2.5 rounded-lg text-xs font-semibold text-white bg-[#142a43] hover:bg-[#203a58] transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs shrink-0"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>{isSubmittingReply ? 'Sending...' : 'Reply'}</span>
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  /* CSAT 5-Star Customer Satisfaction Rating */
+                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 text-center mt-4">
+                    <div className="flex items-center justify-center gap-1 text-emerald-700 font-bold text-xs mb-1">
+                      <Check className="w-4 h-4" />
+                      <span>This support ticket is marked as resolved.</span>
+                    </div>
+
+                    <p className="text-xs text-slate-600 mb-3">
+                      {csatRating
+                        ? `Thank you for rating your support experience (${csatRating}/5 stars)!`
+                        : 'How satisfied are you with the resolution of your issue?'}
+                    </p>
+
+                    {/* Star Rating Buttons */}
+                    <div className="flex items-center justify-center gap-1.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => handleRateCsat(star)}
+                          className={`p-1.5 rounded-md transition-all ${
+                            csatRating && star <= csatRating
+                              ? 'text-amber-500 hover:scale-110'
+                              : 'text-slate-300 hover:text-amber-400'
+                          }`}
+                          title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                        >
+                          <Star className="w-5 h-5 fill-current" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Help desk reference footer */}
             <div className="p-4 bg-slate-100/70 border border-slate-200 rounded-xl flex items-center justify-between text-xs text-slate-600">
               <span className="flex items-center gap-1.5">
                 <LifeBuoy className="w-3.5 h-3.5 text-slate-400" />
-                <span>Need to provide supplemental logs or details?</span>
+                <span>Need immediate human assistance?</span>
               </span>
               <span className="font-semibold text-slate-800 font-mono text-[11px]">
-                Reply referencing #{ticket.ticket_id}
+                Support SLA: Mon–Fri, 9am–6pm
               </span>
             </div>
           </div>

@@ -9,12 +9,14 @@ import {
   RotateCw,
   Clock,
   Sparkles,
-  Check
+  Check,
+  Wrench
 } from 'lucide-react';
 import CustomerNavbar from '../components/layout/CustomerNavbar';
 import StatusBadge from '../components/tickets/StatusBadge';
 import TicketDeflection from '../components/portal/TicketDeflection';
 import ActiveIncidentBanner from '../components/portal/ActiveIncidentBanner';
+import DiagnosticWizard from '../components/portal/DiagnosticWizard';
 import { useAuth } from '../context/AuthContext';
 import { ticketApi } from '../services/ticketApi';
 import { formatDate } from '../utils/formatDate';
@@ -43,7 +45,7 @@ const CustomerPortal = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
 
-  const [activeTab, setActiveTab] = useState('submit'); // 'submit' | 'tickets' | 'faq'
+  const [activeTab, setActiveTab] = useState('submit'); // 'submit' | 'wizard' | 'tickets' | 'faq'
   const [formData, setFormData] = useState({
     subject: '',
     description: '',
@@ -98,6 +100,12 @@ const CustomerPortal = () => {
     showToast('Inquiry resolved instantly! Ticket deflected.', 'success');
   };
 
+  const handleEscalateFromWizard = ({ subject, description }) => {
+    setFormData({ subject, description });
+    setActiveTab('submit');
+    showToast('Diagnostic telemetry imported into request form.', 'success');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -149,12 +157,12 @@ const CustomerPortal = () => {
                 How can we help, {user?.name?.split(' ')[0] || 'there'}?
               </h1>
               <p className="mt-1 text-xs sm:text-sm text-slate-500">
-                Submit a new inquiry, track live resolution status, or search common solutions.
+                Submit an inquiry, use the guided troubleshooter, or track resolution status.
               </p>
             </div>
 
             {/* Quick action controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
                 onClick={() => {
@@ -162,7 +170,7 @@ const CustomerPortal = () => {
                   setDeflectedSolution(null);
                   setActiveTab('submit');
                 }}
-                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all shadow-xs ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shadow-xs ${
                   activeTab === 'submit'
                     ? 'bg-[#142a43] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
@@ -171,10 +179,24 @@ const CustomerPortal = () => {
                 <PlusCircle className="w-3.5 h-3.5" />
                 <span>New Request</span>
               </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('wizard')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shadow-xs ${
+                  activeTab === 'wizard'
+                    ? 'bg-[#142a43] text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Wrench className="w-3.5 h-3.5" />
+                <span>Troubleshooter</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setActiveTab('tickets')}
-                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg transition-all shadow-xs ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shadow-xs ${
                   activeTab === 'tickets'
                     ? 'bg-[#142a43] text-white shadow-sm'
                     : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
@@ -258,13 +280,23 @@ const CustomerPortal = () => {
               </div>
             ) : (
               <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                    Submit Support Request
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Please provide detailed information so our team can resolve your inquiry efficiently.
-                  </p>
+                <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100">
+                  <div>
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                      Submit Support Request
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Please provide detailed information so our team can resolve your inquiry.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('wizard')}
+                    className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-cyan-800 bg-cyan-50 hover:bg-cyan-100 rounded-md border border-cyan-200 transition-colors"
+                  >
+                    <Wrench className="w-3.5 h-3.5" />
+                    <span>Try Troubleshooter</span>
+                  </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -359,6 +391,16 @@ const CustomerPortal = () => {
                 </form>
               </div>
             )}
+          </div>
+        )}
+
+        {/* TAB: GUIDED SELF-DIAGNOSTIC WIZARD */}
+        {activeTab === 'wizard' && (
+          <div className="max-w-3xl mx-auto">
+            <DiagnosticWizard
+              onResolved={handleDeflection}
+              onEscalateToTicket={handleEscalateFromWizard}
+            />
           </div>
         )}
 
