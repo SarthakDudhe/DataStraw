@@ -13,8 +13,8 @@ export const DEMO_CREDENTIALS = {
   CUSTOMER: {
     email: 'customer@example.com',
     password: 'customer123',
-    name: 'Rahul Sharma',
-    title: 'Verified Customer',
+    name: 'Sarah Jenkins',
+    title: 'Lead DevOps Engineer (DataForge)',
     role: 'customer',
   },
 };

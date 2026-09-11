@@ -120,7 +120,7 @@ const CustomerPortal = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        customer_name: user?.name || 'Rahul Sharma',
+        customer_name: user?.name || 'Sarah Jenkins',
         customer_email: user?.email || 'customer@example.com',
         subject: formData.subject.trim(),
         description: formData.description.trim(),
@@ -305,7 +305,7 @@ const CustomerPortal = () => {
                     <div>
                       <span className="ops-label text-slate-500 block">Customer Name</span>
                       <span className="font-semibold text-slate-800 block mt-1">
-                        {user?.name || 'Rahul Sharma'}
+                        {user?.name || 'Sarah Jenkins'}
                       </span>
                     </div>
                     <div>

@@ -110,7 +110,7 @@ const CreateTicket = () => {
               name="customerName"
               value={formData.customerName}
               onChange={handleChange}
-              placeholder="e.g. Rahul Sharma"
+              placeholder="e.g. Sarah Jenkins"
               helperText="Full name of the requesting customer"
               required
               error={errors.customerName}
@@ -123,7 +123,7 @@ const CreateTicket = () => {
               type="email"
               value={formData.customerEmail}
               onChange={handleChange}
-              placeholder="e.g. rahul@example.com"
+              placeholder="e.g. sarah.jenkins@dataforge.io"
               helperText="Used for customer communication"
               required
               error={errors.customerEmail}

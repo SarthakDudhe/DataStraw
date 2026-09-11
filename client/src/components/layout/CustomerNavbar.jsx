@@ -92,7 +92,7 @@ export const CustomerNavbar = ({ activeTab, onTabChange }) => {
           <div className="flex items-center space-x-3">
             <div className="text-right hidden md:block">
               <div className="text-xs font-semibold text-slate-800">
-                {user?.name || 'Rahul Sharma'}
+                {user?.name || 'Sarah Jenkins'}
               </div>
               <div className="text-[10px] text-slate-500 font-mono">
                 {user?.email || 'customer@example.com'}
@@ -100,7 +100,7 @@ export const CustomerNavbar = ({ activeTab, onTabChange }) => {
             </div>
 
             <div className="w-7 h-7 rounded-full bg-cyan-800 text-white flex items-center justify-center text-[10px] font-bold">
-              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'RS'}
+              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'SJ'}
             </div>
 
             <button

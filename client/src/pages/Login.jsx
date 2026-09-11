@@ -283,14 +283,14 @@ const Login = () => {
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-full bg-cyan-800 text-white flex items-center justify-center text-[9px] font-bold shrink-0">
-                      RS
+                      SJ
                     </div>
                     <div className="min-w-0">
                       <div className="text-[11px] font-semibold text-slate-800 group-hover:text-cyan-900 truncate">
-                        Rahul Sharma
+                        Sarah Jenkins
                       </div>
                       <div className="text-[9px] text-slate-500 truncate">
-                        Client / Customer
+                        DataForge Inc. (Client)
                       </div>
                     </div>
                   </div>
