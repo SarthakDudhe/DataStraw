@@ -10,8 +10,10 @@ import {
   Sparkles,
   LifeBuoy
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
+  const { user } = useAuth();
   const navItemClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
       isActive
@@ -111,12 +113,16 @@ const Sidebar = ({ isMobileOpen, onCloseMobile }) => {
       {/* User / Agent status footer */}
       <div className="p-3 border-t border-slate-200 bg-slate-50/60">
         <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-white transition-colors cursor-default">
-          <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center font-medium text-xs text-amber-800">
-            SC
+          <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center font-bold text-xs text-blue-800">
+            {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'AR'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-slate-800 truncate">Support Agent</p>
-            <p className="text-[11px] text-slate-500 truncate">Online and available</p>
+            <p className="text-xs font-semibold text-slate-800 truncate">
+              {user?.name || 'Alex Rivera'}
+            </p>
+            <p className="text-[11px] text-slate-500 truncate">
+              {user?.title || 'Senior Support Lead'}
+            </p>
           </div>
           <LifeBuoy className="w-4 h-4 text-slate-400 hover:text-slate-600 transition-colors" />
         </div>

@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '../components/common/Toast';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import ProtectedRoute from '../components/auth/ProtectedRoute';
+
 import Sidebar from '../components/layout/Sidebar';
 import Navbar from '../components/layout/Navbar';
 import PageContainer from '../components/layout/PageContainer';
+
+import Login from '../pages/Login';
 import Home from '../pages/Home';
 import CreateTicket from '../pages/CreateTicket';
 import TicketDetails from '../pages/TicketDetails';
 import Analytics from '../pages/Analytics';
 import Incidents from '../pages/Incidents';
 import KnowledgeCenter from '../pages/KnowledgeCenter';
+import CustomerPortal from '../pages/CustomerPortal';
+import CustomerTicketView from '../pages/CustomerTicketView';
 import NotFound from '../pages/NotFound';
 import KeyboardShortcutsModal from '../components/common/KeyboardShortcutsModal';
 
-const AppLayout = () => {
+// Admin / Support Staff Layout Shell
+const AdminLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -46,12 +54,57 @@ const AppLayout = () => {
   );
 };
 
+// Root index redirect based on role
+const RootRedirect = () => {
+  const { isAuthenticated, role } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  if (role === 'customer') {
+    return <Navigate to="/portal" replace />;
+  }
+  return <AdminLayout />;
+};
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <AppLayout />
-      </ToastProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <Routes>
+            {/* Public Login Route */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Customer Portal Routes (Protected for Customer & Admin preview) */}
+            <Route
+              path="/portal"
+              element={
+                <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                  <CustomerPortal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portal/tickets/:ticketId"
+              element={
+                <ProtectedRoute allowedRoles={['customer', 'admin']}>
+                  <CustomerTicketView />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin / Employee Support CRM Routes */}
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <RootRedirect />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </ToastProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
