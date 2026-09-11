@@ -380,6 +380,19 @@ export const ticketApi = {
     return response.json();
   },
 
+  async getKnowledgeSuggestions(params = {}) {
+    const query = new URLSearchParams();
+    if (params.subject) query.append('subject', params.subject);
+    if (params.description) query.append('description', params.description);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/knowledge/suggestions?${query.toString()}`);
+      if (!response.ok) return [];
+      return await response.json();
+    } catch {
+      return [];
+    }
+  },
+
   async getKnowledgeArticles(params = '') {
     const search = typeof params === 'string' ? params : params?.search || '';
     const status = typeof params === 'object' && params?.status ? params.status : 'All';

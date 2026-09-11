@@ -27,6 +27,8 @@ import CustomerHistoryCard from '../components/tickets/CustomerHistoryCard';
 import SlaBadge from '../components/tickets/SlaBadge';
 import QuickMacros from '../components/tickets/QuickMacros';
 import CaseSignalsCard from '../components/tickets/CaseSignalsCard';
+import KnowledgeSuggester from '../components/tickets/KnowledgeSuggester';
+import { User, ShieldCheck } from 'lucide-react';
 
 const TicketDetails = () => {
   const { ticketId } = useParams();
@@ -271,23 +273,40 @@ const TicketDetails = () => {
             ) : (
               <div className="space-y-3">
                 {existingNotes.map((n, idx) => {
-                  const noteText = typeof n === 'string' ? n : n.text || n.note;
+                  const noteText = typeof n === 'string' ? n : n.text || n.note || '';
                   const noteDate = typeof n === 'object' ? n.created_at || n.createdAt : null;
+                  const isCustomerNote = noteText.startsWith('Customer');
 
                   return (
                     <div
                       key={idx}
-                      className="p-4 bg-slate-50 rounded-md border border-slate-100 text-xs sm:text-sm text-slate-700 break-words"
+                      className={`p-4 rounded-lg text-xs sm:text-sm break-words border ${
+                        isCustomerNote
+                          ? 'bg-cyan-50/70 border-cyan-200'
+                          : 'bg-slate-50 border-slate-100'
+                      }`}
                     >
+                      <div className="flex items-center justify-between font-semibold mb-2">
+                        <span className="flex items-center gap-1.5">
+                          {isCustomerNote ? (
+                            <User className="w-3.5 h-3.5 text-cyan-700" />
+                          ) : (
+                            <ShieldCheck className="w-3.5 h-3.5 text-slate-700" />
+                          )}
+                          <span className={isCustomerNote ? 'text-cyan-950 font-bold' : 'text-slate-800'}>
+                            {isCustomerNote ? 'Customer Response' : 'Support Staff Note'}
+                          </span>
+                        </span>
+                        {noteDate && (
+                          <div className="flex items-center gap-1 text-[11px] text-slate-400 font-normal">
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            <span>{formatDate(noteDate)}</span>
+                          </div>
+                        )}
+                      </div>
                       <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
-                        {noteText}
+                        {isCustomerNote ? noteText.replace(/^Customer \([^)]+\):\s*/, '') : noteText}
                       </p>
-                      {noteDate && (
-                        <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-slate-500">
-                          <Clock className="w-3 h-3 text-slate-400" />
-                          <span>{formatDate(noteDate)}</span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -422,6 +441,17 @@ const TicketDetails = () => {
                 <AiReplyAssistant
                   ticket={ticket}
                   onInsertReply={handleInsertAiReply}
+                />
+              </div>
+
+              {/* Verified Knowledge Solutions from Backend */}
+              <div className="pt-1">
+                <KnowledgeSuggester
+                  ticket={ticket}
+                  onInsertSolution={(solutionText) => {
+                    setNote((prev) => (prev.trim() ? `${prev}\n\n${solutionText}` : solutionText));
+                    showToast('Knowledge solution inserted into response field.', 'success');
+                  }}
                 />
               </div>
 
